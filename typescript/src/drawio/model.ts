@@ -25,6 +25,7 @@ export interface Element {
 export interface Diagram {
   identifier: string;
   name: string;
+  elements: Element[];
 }
 
 export interface File {
