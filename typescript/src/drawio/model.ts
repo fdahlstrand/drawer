@@ -8,11 +8,10 @@ export interface Size {
     height: number,
 }
 
-export type StyleElement =
-    string | ['rounded', 0 | 1]
 
-export const Style = {
-    rounded: (value: 0 | 1): StyleElement => ['rounded', value]
+export interface Style {
+    name?: string,
+    rounded?: 0 | 1,
 }
 
 export interface Element {
@@ -21,7 +20,7 @@ export interface Element {
     label: string,
     size?: Size,
     position?: Point,
-    style: StyleElement[]
+    style: Style,
 }
 
 export interface Diagram {

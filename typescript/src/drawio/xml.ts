@@ -44,12 +44,17 @@ interface MxCell {
 
 type MxElement = MxCell;
 
-function fromStyleElement(elem: Model.StyleElement): string {
-    if (typeof (elem) === "string") {
-        return `${elem}`
-    } else {
-        return `${elem[0]}=${elem[1]}`
+function fromStyle(style: Model.Style) {
+    let property: keyof typeof style;
+    let st = [];
+    for (property in style) {
+        if (property === "name") {
+            st.push(`${style[property]}`)
+        } else {
+            st.push(`${property}=${style[property]}`)
+        }
     }
+    return st.join(';')
 }
 
 function fromElement(elem: Model.Element): MxElement {
@@ -59,7 +64,7 @@ function fromElement(elem: Model.Element): MxElement {
                 id: elem.identifier,
                 parent: "1",
                 value: elem.label ?? undefined,
-                style: elem.style.map(fromStyleElement).join(';'),
+                style: fromStyle(elem.style),
                 vertex: 1
             }
         }
