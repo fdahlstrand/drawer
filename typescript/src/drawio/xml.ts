@@ -48,19 +48,19 @@ const Diagram = {
 
 interface MxGraphModel {
   ":@": {
-    grid?: 0 | 1;
+    grid?: "0" | "1";
     gridSize?: number;
-    guides?: 0 | 1;
-    tooltips?: 0 | 1;
-    connect?: 0 | 1;
-    arrows?: 0 | 1;
-    fold?: 0 | 1;
-    page?: 0 | 1;
+    guides?: "0" | "1";
+    tooltips?: "0" | "1";
+    connect?: "0" | "1";
+    arrows?: "0" | "1";
+    fold?: "0" | "1";
+    page?: "0" | "1";
     pageScale?: number;
     pageWidth?: number;
     pageHeight?: number;
-    math?: 0 | 1;
-    shadow?: 0 | 1;
+    math?: "0" | "1";
+    shadow?: "0" | "1";
   };
   mxGraphModel: [
     {
@@ -71,19 +71,19 @@ interface MxGraphModel {
 const MxGraphModel = {
   toXml: (diagram: Model.Diagram): MxGraphModel => ({
     ":@": {
-      grid: 1,
+      grid: "1",
       gridSize: 10,
-      guides: 1,
-      tooltips: 1,
-      connect: 1,
-      arrows: 1,
-      fold: 1,
-      page: 1,
+      guides: "1",
+      tooltips: "1",
+      connect: "1",
+      arrows: "1",
+      fold: "1",
+      page: "1",
       pageScale: 1,
       pageWidth: 850,
       pageHeight: 1100,
-      math: 1,
-      shadow: 1,
+      math: "1",
+      shadow: "1",
     },
     mxGraphModel: [
       {
@@ -116,7 +116,10 @@ interface MxCell {
     parent?: string;
     value?: string;
     style?: string;
-    vertex?: 0 | 1;
+    vertex?: "0" | "1";
+    edge?: "0" | "1";
+    source?: string;
+    target?: string;
   };
   mxCell: MxGeometry[];
 }
@@ -127,7 +130,7 @@ interface MxGeometry {
     y?: number;
     height?: number;
     width?: number;
-    relative?: 0 | 1;
+    relative?: "0" | "1";
     as: "geometry";
   };
   mxGeometry: [];
@@ -136,13 +139,13 @@ interface MxGeometry {
 type MxElement = MxCell;
 
 const MxElement = {
-  toXml: (elem: Model.Element): MxElement => ({
+  toXml: (elem: Model.Shape): MxElement => ({
     ":@": {
       id: elem.identifier,
       parent: "1",
       value: elem.label,
       style: Model.Style.toString(elem.style),
-      vertex: 1,
+      vertex: "1",
     },
     mxCell: [
       {
@@ -157,21 +160,44 @@ const MxElement = {
       },
     ],
   }),
+  getType: (elem: MxCell): "shape" | "connection" | undefined => {
+    if ((elem[":@"].vertex ?? "0") === "1") {
+      return "shape";
+    } else if ((elem[":@"].edge ?? "0") === "1") {
+      return "connection";
+    } else {
+      return undefined;
+    }
+  },
   fromXml: (elem: MxCell): Model.Element => {
-    return {
-      kind: "object",
-      identifier: elem[":@"].id,
-      label: elem[":@"].value,
-      style: Model.Style.fromString(elem[":@"].style),
-      position: {
-        x: elem.mxCell[0][":@"].x,
-        y: elem.mxCell[0][":@"].y,
-      },
-      size: {
-        width: elem.mxCell[0][":@"].width,
-        height: elem.mxCell[0][":@"].height,
-      },
-    };
+    switch (MxElement.getType(elem)) {
+      case "shape":
+        return {
+          kind: "shape",
+          identifier: elem[":@"].id,
+          label: elem[":@"].value,
+          style: Model.Style.fromString(elem[":@"].style),
+          position: {
+            x: Number(elem.mxCell[0][":@"].x),
+            y: Number(elem.mxCell[0][":@"].y),
+          },
+          size: {
+            width: Number(elem.mxCell[0][":@"].width),
+            height: Number(elem.mxCell[0][":@"].height),
+          },
+        };
+        break;
+      case "connection":
+        return {
+          kind: "connection",
+          identifier: elem[":@"].id,
+          label: elem[":@"].value,
+          style: Model.Style.fromString(elem[":@"].style),
+          source: elem[":@"].source,
+          target: elem[":@"].target,
+        };
+        break;
+    }
   },
 };
 

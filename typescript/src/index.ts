@@ -8,7 +8,7 @@ const diagram: DrawIO.Diagram = {
   name: "Page-Foo",
   elements: [
     {
-      kind: "object",
+      kind: "shape",
       identifier: "O1",
       label: "<b>Hello</b>",
       style: {
@@ -35,3 +35,4 @@ const input = fs.readFileSync("./dist/test.drawio", "utf-8");
 const diagrams = Xml.fromXml(input);
 
 console.log(diagrams[0].elements[0]);
+console.log(diagrams[0].elements[1]);

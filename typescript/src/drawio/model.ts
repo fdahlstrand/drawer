@@ -54,19 +54,32 @@ export const Style = {
   },
 };
 
-export interface Element {
-  kind: "object" | "relation";
+export interface MetaElement {
+  kind: "shape" | "connection";
   identifier: string;
   label: string;
-  size?: Size;
-  position?: Point;
   style: Style;
 }
+
+export interface Shape extends MetaElement {
+  kind: "shape";
+  size?: Size;
+  position?: Point;
+}
+
+export interface Connection extends MetaElement {
+  kind: "connection";
+  source: string;
+  target: string;
+  waypoints?: Point[];
+}
+
+export type Element = Shape | Connection;
 
 export interface Diagram {
   identifier: string;
   name: string;
-  elements: Element[];
+  elements: (Shape | Connection)[];
 }
 
 export interface File {
