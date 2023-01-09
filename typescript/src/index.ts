@@ -2,7 +2,6 @@ import * as Xml from "./drawio/xml.js";
 import * as DrawIO from "./drawio/model.js";
 
 import fs from "node:fs";
-import { XMLParser } from "fast-xml-parser";
 
 const diagram: DrawIO.Diagram = {
   identifier: "P1",
@@ -33,11 +32,6 @@ const xml = Xml.toXml([diagram]);
 fs.writeFileSync("./dist/generated.drawio", xml, "utf-8");
 
 const input = fs.readFileSync("./dist/test.drawio", "utf-8");
+const diagrams = Xml.fromXml(input);
 
-const parsed = new XMLParser({
-  ignoreAttributes: false,
-  preserveOrder: true,
-  attributeNamePrefix: "",
-}).parse(input) as any;
-
-console.log(JSON.stringify(parsed));
+console.log(diagrams[0].elements[0]);

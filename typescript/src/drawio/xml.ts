@@ -1,4 +1,4 @@
-import { XMLBuilder } from "fast-xml-parser";
+import { XMLParser, XMLBuilder } from "fast-xml-parser";
 import * as Model from "./model.js";
 
 interface MxFile {
@@ -17,6 +17,9 @@ const MxFile = {
     },
     mxfile: diagrams.map(Diagram.toXml),
   }),
+  fromXml: (file: MxFile): Model.Diagram[] => {
+    return file.mxfile.map(Diagram.fromXml);
+  },
 };
 
 interface Diagram {
@@ -34,6 +37,13 @@ const Diagram = {
     },
     diagram: [MxGraphModel.toXml(diagram)],
   }),
+  fromXml: (diagram: Diagram): Model.Diagram => {
+    return MxGraphModel.fromXml(
+      diagram.diagram[0],
+      diagram[":@"].id,
+      diagram[":@"].name
+    );
+  },
 };
 
 interface MxGraphModel {
@@ -85,6 +95,19 @@ const MxGraphModel = {
       },
     ],
   }),
+  fromXml: (
+    diagram: MxGraphModel,
+    id: string,
+    name: string
+  ): Model.Diagram => {
+    return {
+      identifier: id,
+      name: name,
+      elements: diagram.mxGraphModel[0].root
+        .filter((e) => e[":@"].id !== "0" && e[":@"].id !== "1")
+        .map(MxElement.fromXml),
+    };
+  },
 };
 
 interface MxCell {
@@ -134,6 +157,22 @@ const MxElement = {
       },
     ],
   }),
+  fromXml: (elem: MxCell): Model.Element => {
+    return {
+      kind: "object",
+      identifier: elem[":@"].id,
+      label: elem[":@"].value,
+      style: Model.Style.fromString(elem[":@"].style),
+      position: {
+        x: elem.mxCell[0][":@"].x,
+        y: elem.mxCell[0][":@"].y,
+      },
+      size: {
+        width: elem.mxCell[0][":@"].width,
+        height: elem.mxCell[0][":@"].height,
+      },
+    };
+  },
 };
 
 export function toXml(diagrams: Model.Diagram[]): string {
@@ -149,4 +188,15 @@ export function toXml(diagrams: Model.Diagram[]): string {
   const xml: string = builder.build(obj);
 
   return xml.trimStart();
+}
+
+export function fromXml(xml: string): Model.Diagram[] {
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    preserveOrder: true,
+    attributeNamePrefix: "",
+  });
+  const obj = parser.parse(xml) as MxFile[];
+
+  return MxFile.fromXml(obj[0]);
 }
