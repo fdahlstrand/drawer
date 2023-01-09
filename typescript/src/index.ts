@@ -1,5 +1,4 @@
-import * as Xml from "./drawio/xml.js";
-import * as DrawIO from "./drawio/model.js";
+import * as DrawIO from "./drawio/drawio.js";
 
 import fs from "node:fs";
 
@@ -28,11 +27,13 @@ const diagram: DrawIO.Diagram = {
   ],
 };
 
-const xml = Xml.toXml([diagram]);
+const serializer = new DrawIO.XmlSerializer();
+
+const xml = serializer.stringify({ diagrams: [diagram] });
 fs.writeFileSync("./dist/generated.drawio", xml, "utf-8");
 
 const input = fs.readFileSync("./dist/test.drawio", "utf-8");
-const diagrams = Xml.fromXml(input);
+const file = serializer.parse(input);
 
-console.log(diagrams[0].elements[0]);
-console.log(diagrams[0].elements[1]);
+console.log(file.diagrams[0].elements[0]);
+console.log(file.diagrams[0].elements[1]);
