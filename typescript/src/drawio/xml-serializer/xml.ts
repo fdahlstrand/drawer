@@ -60,7 +60,16 @@ interface MxGeometry {
     relative?: "0" | "1";
     as: "geometry";
   };
-  mxGeometry: [];
+  mxGeometry: MxPoint[];
+}
+
+interface MxPoint {
+  ":@": {
+    as: "sourcePoint" | "targetPoint";
+    x?: number;
+    y?: number;
+  };
+  mxPoint: [];
 }
 
 export type MxElement = MxCell;

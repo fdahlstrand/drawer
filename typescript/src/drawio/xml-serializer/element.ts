@@ -96,7 +96,13 @@ export class Connection {
   }
 
   static fromXml(elem: Xml.MxElement): Model.Connection {
-    return {
+    const srcPoint = elem.mxCell[0].mxGeometry.filter(
+      (pt) => pt[":@"].as === "sourcePoint"
+    )[0];
+    const tgtPoint = elem.mxCell[0].mxGeometry.filter(
+      (pt) => pt[":@"].as === "targetPoint"
+    )[0];
+    const conn: Model.Connection = {
       kind: "connection",
       identifier: elem[":@"].id,
       label: elem[":@"].value,
@@ -104,5 +110,21 @@ export class Connection {
       source: elem[":@"].source,
       target: elem[":@"].target,
     };
+
+    if (srcPoint !== undefined) {
+      conn.sourcePoint = {
+        x: srcPoint[":@"].x,
+        y: srcPoint[":@"].y,
+      };
+    }
+
+    if (tgtPoint !== undefined) {
+      conn.targetPoint = {
+        x: tgtPoint[":@"].x,
+        y: tgtPoint[":@"].y,
+      };
+    }
+
+    return conn;
   }
 }

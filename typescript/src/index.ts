@@ -38,5 +38,6 @@ fs.writeFileSync("./dist/generated.drawio", xml, "utf-8");
 const input = fs.readFileSync("./dist/test.drawio", "utf-8");
 const file = serializer.parse(input);
 
-console.log(file.diagrams[0].elements[0]);
-console.log(file.diagrams[0].elements[1]);
+for (let i = 0; i < file.diagrams[0].elements.length; i++) {
+  console.log(file.diagrams[0].elements[i]);
+}
