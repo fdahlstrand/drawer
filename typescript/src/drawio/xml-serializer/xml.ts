@@ -37,7 +37,19 @@ interface MxGraphModel {
   ];
 }
 
-interface MxCell {
+export type MxElement = MxCell | MxObject;
+
+export interface MxObject {
+  ":@": {
+    id: string;
+    label: string;
+    placeholders?: "0" | "1";
+    [key: string]: string;
+  };
+  object: MxCell[];
+}
+
+export interface MxCell {
   ":@": {
     id?: string;
     parent?: string;
@@ -78,5 +90,3 @@ export interface MxPoint {
   };
   mxPoint: [];
 }
-
-export type MxElement = MxCell;

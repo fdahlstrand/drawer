@@ -59,6 +59,7 @@ export interface MetaElement {
   identifier: string;
   label: string;
   style: Style;
+  placeholders?: Map<string, string>;
 }
 
 export interface Shape extends MetaElement {
