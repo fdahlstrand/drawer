@@ -1,5 +1,6 @@
 import * as Model from "../model.js";
 import * as Xml from "./xml.js";
+import { Style } from "./style.js";
 
 export class Element {
   static toXml(elem: Model.Element): Xml.MxElement {
@@ -42,7 +43,7 @@ export class Shape {
         id: shape.identifier,
         parent: "1",
         value: shape.label,
-        style: Model.Style.toString(shape.style),
+        style: Style.stringify(shape.style),
         vertex: "1",
       },
       mxCell: [
@@ -65,7 +66,7 @@ export class Shape {
       kind: "shape",
       identifier: elem[":@"].id,
       label: elem[":@"].value,
-      style: Model.Style.fromString(elem[":@"].style),
+      style: Style.parse(elem[":@"].style),
       position: {
         x: Number(elem.mxCell[0][":@"].x),
         y: Number(elem.mxCell[0][":@"].y),
@@ -88,7 +89,7 @@ export class Connection {
         edge: "1",
         source: connection.source,
         target: connection.target,
-        style: Model.Style.toString(connection.style),
+        style: Style.stringify(connection.style),
       },
       mxCell: [],
     };
@@ -99,7 +100,7 @@ export class Connection {
       kind: "connection",
       identifier: elem[":@"].id,
       label: elem[":@"].value,
-      style: Model.Style.fromString(elem[":@"].style),
+      style: Style.parse(elem[":@"].style),
       source: elem[":@"].source,
       target: elem[":@"].target,
     };

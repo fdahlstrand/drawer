@@ -8,51 +8,47 @@ export interface Size {
   height: number;
 }
 
+export enum ArrowStyle {
+  None,
+  Classic,
+  ClassicThin,
+  Open,
+  OpenThin,
+  OpenAsync,
+  Block,
+  BlockThin,
+  Async,
+  Oval,
+  Diamond,
+  DiamondThin,
+  Box,
+  HalfCircle,
+  Dash,
+  Cross,
+  CirclePlus,
+  Circle,
+  BaseDash,
+  ERone,
+  ERmandOne,
+  ERmany,
+  ERoneToMany,
+  ERzeroToOne,
+  ERzeroToMany,
+  DoubleBlock,
+}
+
+export enum Option {
+  Yes,
+  No,
+}
+
 export interface Style {
   name?: string;
-  rounded?: 0 | 1;
-  html?: 0 | 1;
+  rounded?: Option;
+  html?: Option;
   whiteSpace?: "wrap";
+  endArrow?: ArrowStyle;
 }
-export const Style = {
-  toString(style: Style): string {
-    let property: keyof typeof style;
-    const st = [];
-    for (property in style) {
-      if (property === "name") {
-        st.push(`${style[property]}`);
-      } else {
-        st.push(`${property}=${style[property]}`);
-      }
-    }
-    return st.join(";");
-  },
-  fromString(style: string): Style {
-    const elems = style.split(";").filter((e) => e !== "");
-    const s: Style = {};
-    elems.forEach((e) => {
-      if (e.indexOf("=") == -1) {
-        s.name = e;
-      } else {
-        const [property, value] = e.split("=");
-        switch (property) {
-          case "html":
-          case "rounded":
-            s[property] = value === "1" ? 1 : 0;
-            break;
-          case "whiteSpace":
-            if (value === "wrap") {
-              s[property] = value;
-            }
-            break;
-          default:
-            console.warn(`Unexpected style ignored (${property}=${value})`);
-        }
-      }
-    });
-    return s;
-  },
-};
 
 export interface MetaElement {
   kind: "shape" | "connection";
@@ -71,6 +67,8 @@ export interface Connection extends MetaElement {
   kind: "connection";
   source: string;
   target: string;
+  sourcePoint?: Point;
+  targetPoint?: Point;
   waypoints?: Point[];
 }
 

@@ -2,6 +2,9 @@ import * as DrawIO from "./drawio/drawio.js";
 
 import fs from "node:fs";
 
+const Yes = DrawIO.Option.Yes;
+const No = DrawIO.Option.No;
+
 const diagram: DrawIO.Diagram = {
   identifier: "P1",
   name: "Page-Foo",
@@ -11,8 +14,8 @@ const diagram: DrawIO.Diagram = {
       identifier: "O1",
       label: "<b>Hello</b>",
       style: {
-        rounded: 0,
-        html: 1,
+        rounded: No,
+        html: Yes,
         whiteSpace: "wrap",
       },
       position: {
