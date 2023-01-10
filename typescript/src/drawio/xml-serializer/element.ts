@@ -81,7 +81,39 @@ export class Shape {
 
 export class Connection {
   static toXml(connection: Model.Connection): Xml.MxElement {
-    return {
+    const srcPoint: Xml.MxPoint =
+      connection.sourcePoint !== undefined
+        ? {
+            ":@": {
+              as: "sourcePoint",
+              x: connection.sourcePoint.x,
+              y: connection.sourcePoint.y,
+            },
+            mxPoint: [],
+          }
+        : undefined;
+
+    const tgtPoint: Xml.MxPoint =
+      connection.targetPoint !== undefined
+        ? {
+            ":@": {
+              as: "targetPoint",
+              x: connection.targetPoint.x,
+              y: connection.targetPoint.y,
+            },
+            mxPoint: [],
+          }
+        : undefined;
+
+    const waypoints: Xml.MxPoint[] =
+      connection.waypoints !== undefined
+        ? connection.waypoints.map((p) => ({
+            ":@": { x: p.x, y: p.y },
+            mxPoint: [],
+          }))
+        : undefined;
+
+    const elem: Xml.MxElement = {
       ":@": {
         id: connection.identifier,
         parent: "1",
@@ -91,8 +123,34 @@ export class Connection {
         target: connection.target,
         style: Style.stringify(connection.style),
       },
-      mxCell: [],
+      mxCell: [
+        {
+          ":@": {
+            as: "geometry",
+          },
+          mxGeometry: [],
+        },
+      ],
     };
+
+    if (srcPoint !== undefined) {
+      elem.mxCell[0].mxGeometry.push(srcPoint);
+    }
+
+    if (tgtPoint !== undefined) {
+      elem.mxCell[0].mxGeometry.push(tgtPoint);
+    }
+
+    if (waypoints !== undefined) {
+      elem.mxCell[0].mxGeometry.push({
+        ":@": {
+          as: "points",
+        },
+        Array: waypoints,
+      });
+    }
+
+    return elem;
   }
 
   static fromXml(elem: Xml.MxElement): Model.Connection {
