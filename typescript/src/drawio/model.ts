@@ -48,6 +48,10 @@ export interface Style {
   html?: Option;
   whiteSpace?: "wrap";
   endArrow?: ArrowStyle;
+  endFill?: Option;
+  startArrow?: ArrowStyle;
+  startFill?: Option;
+  strokeWidth?: number;
 }
 
 export interface MetaElement {

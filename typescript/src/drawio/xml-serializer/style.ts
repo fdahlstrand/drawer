@@ -50,21 +50,27 @@ export class Style {
         case "name":
           st.push(`${style[property]}`);
           break;
+        case "endFill":
         case "html":
         case "rounded":
+        case "startFill":
           st.push(`${property}=${style[property] === Yes ? "1" : "0"}`);
+          break;
+        case "strokeWidth":
+          st.push(`${property}=${style[property]}`);
           break;
         case "whiteSpace":
           st.push(`${property}=${style[property]}`);
           break;
         case "endArrow":
+        case "startArrow":
           st.push(`${property}=${arrowStyleMap[style[property]]}`);
           break;
         default:
           assertUnreachable(property);
       }
     }
-    return st.join(";");
+    return st.join(";") + ";";
   }
 
   static parse(str: string): Model.Style {
@@ -79,22 +85,35 @@ export class Style {
       }
 
       switch (property) {
-        case "rounded":
-          s.rounded = option(value);
-          break;
+        case "endFill":
         case "html":
-          s.html = option(value);
+        case "rounded":
+        case "startFill":
+          s[property] = option(value);
           break;
         case "whiteSpace":
           if (value === "wrap") {
             s.whiteSpace = value;
           }
           break;
+        case "strokeWidth":
+          s[property] = Number(value);
+          break;
         case "endArrow": {
           let k: keyof typeof Model.ArrowStyle;
           for (k in arrowStyleMap) {
             if (value === arrowStyleMap[k]) {
               s.endArrow =
+                Model.ArrowStyle[k as keyof typeof Model.ArrowStyle];
+            }
+          }
+          break;
+        }
+        case "startArrow": {
+          let k: keyof typeof Model.ArrowStyle;
+          for (k in arrowStyleMap) {
+            if (value === arrowStyleMap[k]) {
+              s.startArrow =
                 Model.ArrowStyle[k as keyof typeof Model.ArrowStyle];
             }
           }
