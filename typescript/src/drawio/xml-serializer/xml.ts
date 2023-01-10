@@ -60,12 +60,19 @@ interface MxGeometry {
     relative?: "0" | "1";
     as: "geometry";
   };
-  mxGeometry: MxPoint[];
+  mxGeometry: (MxPoint | MxArray)[];
 }
 
-interface MxPoint {
+export interface MxArray {
   ":@": {
-    as: "sourcePoint" | "targetPoint";
+    as: "points";
+  };
+  Array: MxPoint[];
+}
+
+export interface MxPoint {
+  ":@": {
+    as?: "sourcePoint" | "targetPoint";
     x?: number;
     y?: number;
   };
