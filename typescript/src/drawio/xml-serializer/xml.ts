@@ -63,7 +63,7 @@ export interface MxCell {
   mxCell: MxGeometry[];
 }
 
-interface MxGeometry {
+export interface MxGeometry {
   ":@": {
     x?: number;
     y?: number;
