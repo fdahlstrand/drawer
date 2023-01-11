@@ -155,7 +155,7 @@ function pointFromXmlGeometry(
   type?: "sourcePoint" | "targetPoint"
 ): Model.Point {
   return elem
-    .filter((p) => "mxPoint" in elem && p[":@"].as === type)
+    .filter((p) => "mxPoint" in p && p[":@"].as === type)
     .map((p) => p as Xml.MxPoint)
     .map(pointFromXml)[0];
 }
