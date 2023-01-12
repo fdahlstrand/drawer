@@ -38,8 +38,8 @@ export enum ArrowStyle {
 }
 
 export enum Option {
-  Yes,
   No,
+  Yes,
 }
 
 export interface Style {
