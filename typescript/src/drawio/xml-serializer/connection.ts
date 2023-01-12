@@ -167,7 +167,7 @@ function arrayFromXmlGeometry(
     .filter((e) => "Array" in e)
     .map((a) => a as Xml.MxArray)[0];
 
-  return arr.Array.map(pointFromXml);
+  return arr?.Array.map(pointFromXml);
 }
 
 function pointFromXml(pt: Xml.MxPoint): Model.Point {
