@@ -44,9 +44,9 @@ function toXmlAsCell(connection: Model.Connection): Xml.MxCell {
           as: "geometry",
         },
         mxGeometry: [
-          ...(srcPoint && [srcPoint]),
-          ...(tgtPoint && [tgtPoint]),
-          ...(waypoints && [waypoints]),
+          ...(srcPoint ? [srcPoint] : []),
+          ...(tgtPoint ? [tgtPoint] : []),
+          ...(waypoints ? [waypoints] : []),
         ],
       },
     ],
