@@ -41,7 +41,8 @@ const styleMapper = (function () {
   }
 
   function arrowStyleMapper(key: string, value: Model.ArrowStyle): string {
-    return `${key}=${arrowStyleMap[value]}`;
+    const v = Model.ArrowStyle[value] as keyof typeof Model.ArrowStyle;
+    return `${key}=${arrowStyleMap[v]}`;
   }
 
   function numberMapper(key: string, value: number): string {
