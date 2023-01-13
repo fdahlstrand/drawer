@@ -4,10 +4,13 @@ import { Style } from "./style.js";
 
 export class Shape {
   static toXml(shape: Model.Shape): Xml.MxElement {
-    if (shape.placeholders === undefined || shape.placeholders.size == 0) {
-      return toXmlAsCell(shape);
-    } else {
+    if (
+      shape.placeholders?.size > 0 ||
+      shape?.enablePlaceholders === Model.Option.Yes
+    ) {
       return toXmlAsObject(shape);
+    } else {
+      return toXmlAsCell(shape);
     }
   }
 
@@ -46,13 +49,14 @@ function toXmlAsCell(shape: Model.Shape): Xml.MxCell {
 
 function toXmlAsObject(shape: Model.Shape): Xml.MxObject {
   const placeholders = Object.fromEntries(shape.placeholders ?? []);
-  const hasPlaceholders = shape.placeholders ? "0" : "1";
+  const enablePlaceholders =
+    shape.enablePlaceholders === Model.Option.No ? "0" : "1";
 
   return {
     ":@": {
       id: shape.identifier,
       label: shape.label,
-      placeholders: hasPlaceholders,
+      placeholders: enablePlaceholders,
       ...placeholders,
     },
     object: [
@@ -113,6 +117,8 @@ function fromXmlAsObject(obj: Xml.MxObject): Model.Element {
       width: Number(cell.width),
       height: Number(cell.height),
     },
+    enablePlaceholders:
+      obj[":@"].placeholders === "1" ? Model.Option.Yes : Model.Option.No,
     placeholders,
   };
 }

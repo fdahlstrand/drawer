@@ -4,7 +4,10 @@ import { Style } from "./style.js";
 
 export class Connection {
   static toXml(connection: Model.Connection): Xml.MxElement {
-    if (connection.placeholders && connection.placeholders.size > 0) {
+    if (
+      connection.placeholders?.size > 0 ||
+      connection?.enablePlaceholders === Model.Option.Yes
+    ) {
       return toXmlAsObject(connection);
     } else {
       return toXmlAsCell(connection);
@@ -52,7 +55,8 @@ function toXmlAsCell(connection: Model.Connection): Xml.MxCell {
 
 function toXmlAsObject(connection: Model.Connection): Xml.MxObject {
   const placeholders = Object.fromEntries(connection.placeholders ?? []);
-  const hasPlaceholders = connection.placeholders ? "0" : "1";
+  const enablePlaceholders =
+    connection.enablePlaceholders === Model.Option.No ? "0" : "1";
   const srcPoint = toXmlPoint(connection.sourcePoint, "sourcePoint");
   const tgtPoint = toXmlPoint(connection.targetPoint, "targetPoint");
   const waypoints = toXmlPointList(connection.waypoints);
@@ -61,7 +65,7 @@ function toXmlAsObject(connection: Model.Connection): Xml.MxObject {
     ":@": {
       id: connection.identifier,
       label: connection.label,
-      placeholders: hasPlaceholders,
+      placeholders: enablePlaceholders,
       ...placeholders,
     },
     object: [
@@ -106,20 +110,22 @@ function fromXmlAsCell(elem: Xml.MxCell): Model.Connection {
   };
 }
 
-function fromXmlAsObject(elem: Xml.MxObject): Model.Connection {
-  const cell = elem.object[0].mxCell[0];
+function fromXmlAsObject(obj: Xml.MxObject): Model.Connection {
+  const cell = obj.object[0].mxCell[0];
 
   return {
     kind: "connection",
-    identifier: elem[":@"].id,
-    label: elem[":@"].label,
-    style: Style.parse(elem.object[0][":@"].style),
-    source: elem.object[0][":@"].source,
-    target: elem.object[0][":@"].target,
+    identifier: obj[":@"].id,
+    label: obj[":@"].label,
+    style: Style.parse(obj.object[0][":@"].style),
+    source: obj.object[0][":@"].source,
+    target: obj.object[0][":@"].target,
     sourcePoint: pointFromXmlGeometry(cell.mxGeometry, "sourcePoint"),
     targetPoint: pointFromXmlGeometry(cell.mxGeometry, "targetPoint"),
     waypoints: arrayFromXmlGeometry(cell.mxGeometry),
-    placeholders: placeholdersFromXml(elem),
+    enablePlaceholders:
+      obj[":@"].placeholders === "1" ? Model.Option.Yes : Model.Option.No,
+    placeholders: placeholdersFromXml(obj),
   };
 }
 

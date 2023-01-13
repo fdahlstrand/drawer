@@ -59,6 +59,7 @@ export interface MetaElement {
   identifier: string;
   label: string;
   style: Style;
+  enablePlaceholders?: Option;
   placeholders?: Map<string, string>;
 }
 
