@@ -12,7 +12,7 @@ const diagram: DrawIO.Diagram = {
     {
       kind: "shape",
       identifier: "O1",
-      label: "<b>Hello</b>",
+      label: "<b>Hello: %foo%</b>",
       style: {
         rounded: No,
         html: Yes,
@@ -26,6 +26,46 @@ const diagram: DrawIO.Diagram = {
         width: 120,
         height: 60,
       },
+      enablePlaceholders: Yes,
+      placeholders: new Map(
+        Object.entries({
+          foo: "12",
+        })
+      ),
+    },
+    {
+      kind: "shape",
+      identifier: "O2",
+      label: "<b>Hello: %foo%</b>",
+      style: {
+        rounded: No,
+        html: Yes,
+        whiteSpace: "wrap",
+      },
+      position: {
+        x: 320,
+        y: 320,
+      },
+      size: {
+        width: 120,
+        height: 60,
+      },
+      enablePlaceholders: Yes,
+      placeholders: new Map(
+        Object.entries({
+          foo: "24",
+        })
+      ),
+    },
+    {
+      kind: "connection",
+      identifier: "R1",
+      label: "A connection",
+      style: {
+        endArrow: DrawIO.ArrowStyle.Classic,
+      },
+      source: "O1",
+      target: "O2",
     },
   ],
 };
