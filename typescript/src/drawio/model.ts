@@ -84,6 +84,7 @@ export interface Diagram {
   identifier: string;
   name: string;
   elements: (Shape | Connection)[];
+  shadows?: Option;
 }
 
 export interface File {

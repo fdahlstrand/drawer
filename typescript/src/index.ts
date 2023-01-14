@@ -8,6 +8,7 @@ const No = DrawIO.Option.No;
 const diagram: DrawIO.Diagram = {
   identifier: "P1",
   name: "Page-Foo",
+  shadows: No,
   elements: [
     {
       kind: "shape",

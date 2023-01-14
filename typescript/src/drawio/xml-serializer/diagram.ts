@@ -4,6 +4,7 @@ import { Element } from "./element.js";
 
 export class Diagram {
   static toXml(diagram: Model.Diagram): Xml.Diagram {
+    const option = (o: Model.Option) => (o === Model.Option.Yes ? "1" : "0");
     return {
       ":@": {
         id: diagram.identifier,
@@ -24,7 +25,7 @@ export class Diagram {
             pageWidth: 850,
             pageHeight: 1100,
             math: "1",
-            shadow: "1",
+            shadow: option(diagram.shadows),
           },
           mxGraphModel: [
             {
@@ -41,12 +42,15 @@ export class Diagram {
   }
 
   static fromXml(diagram: Xml.Diagram): Model.Diagram {
+    const option = (o: "0" | "1") =>
+      o === "1" ? Model.Option.Yes : Model.Option.No;
     return {
       identifier: diagram[":@"].id,
       name: diagram[":@"].name,
       elements: diagram.diagram[0].mxGraphModel[0].root
         .filter((e) => e[":@"].id !== "0" && e[":@"].id !== "1")
         .map(Element.fromXml),
+      shadows: option(diagram.diagram[0][":@"].shadow),
     };
   }
 }
