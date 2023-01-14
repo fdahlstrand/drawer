@@ -2,62 +2,35 @@ import * as DrawIO from "./drawio/drawio.js";
 
 import fs from "node:fs";
 
-const Yes = DrawIO.Option.Yes;
-const No = DrawIO.Option.No;
-
 const diagram: DrawIO.Diagram = {
   identifier: "P1",
   name: "Page-Foo",
-  shadows: No,
+  shadows: DrawIO.No,
   elements: [
-    {
-      kind: "shape",
-      identifier: "O1",
-      label: "<b>Hello: %foo%</b>",
-      style: {
-        rounded: No,
-        html: Yes,
+    new DrawIO.ShapeBuilder("O1")
+      .withLabel("<i>Hello: %foo%</i>")
+      .withStyle({
+        rounded: DrawIO.Yes,
+        html: DrawIO.Yes,
         whiteSpace: "wrap",
-      },
-      position: {
-        x: 320,
-        y: 160,
-      },
-      size: {
-        width: 120,
-        height: 60,
-      },
-      enablePlaceholders: Yes,
-      placeholders: new Map(
-        Object.entries({
-          foo: "12",
-        })
-      ),
-    },
-    {
-      kind: "shape",
-      identifier: "O2",
-      label: "<b>Hello: %foo%</b>",
-      style: {
-        rounded: No,
-        html: Yes,
+      })
+      .atPosition(320, 160)
+      .withSize(120, 60)
+      .withPlaceholder("foo", 12)
+      .usePlaceholders()
+      .build(),
+    new DrawIO.ShapeBuilder("O2")
+      .withLabel("<b>Hello: %foo%</b>")
+      .withStyle({
+        rounded: DrawIO.No,
+        html: DrawIO.Yes,
         whiteSpace: "wrap",
-      },
-      position: {
-        x: 320,
-        y: 320,
-      },
-      size: {
-        width: 120,
-        height: 60,
-      },
-      enablePlaceholders: Yes,
-      placeholders: new Map(
-        Object.entries({
-          foo: "24",
-        })
-      ),
-    },
+      })
+      .atPosition(320, 320)
+      .withSize(120, 60)
+      .withPlaceholder("foo", 2 * 12)
+      .usePlaceholders()
+      .build(),
     {
       kind: "connection",
       identifier: "R1",
