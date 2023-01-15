@@ -31,16 +31,12 @@ const diagram: DrawIO.Diagram = {
       .withPlaceholder("foo", 2 * 12)
       .usePlaceholders()
       .build(),
-    {
-      kind: "connection",
-      identifier: "R1",
-      label: "A connection",
-      style: {
+    new DrawIO.ConnectionBuilder("R1", "O1", "O2")
+      .withLabel("A connection")
+      .withStyle({
         endArrow: DrawIO.ArrowStyle.Classic,
-      },
-      source: "O1",
-      target: "O2",
-    },
+      })
+      .build(),
   ],
 };
 
