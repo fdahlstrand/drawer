@@ -2,6 +2,13 @@ import * as DrawIO from "./drawio/drawio.js";
 
 import fs from "node:fs";
 
+enum Colors {
+  Red = "#FF0000",
+  Green = "#00FF00",
+  Blue = "#0000FF",
+  None = "none",
+}
+
 const diagram: DrawIO.Diagram = {
   identifier: "P1",
   name: "Page-Foo",
@@ -13,6 +20,8 @@ const diagram: DrawIO.Diagram = {
         rounded: DrawIO.Yes,
         html: DrawIO.Yes,
         whiteSpace: "wrap",
+        fillColor: Colors.None,
+        strokeColor: Colors.Green,
       })
       .atPosition(320, 160)
       .withPlaceholder("foo", 12)
@@ -23,12 +32,15 @@ const diagram: DrawIO.Diagram = {
         rounded: DrawIO.No,
         html: DrawIO.Yes,
         whiteSpace: "wrap",
+        fillColor: Colors.Blue,
+        strokeColor: Colors.None,
       })
       .atPosition(320, 320)
       .withPlaceholder("foo", 2 * 12)
       .usePlaceholders(),
     DrawIO.Connection("R1", "O1", "O2").withLabel("A connection").withStyle({
       endArrow: DrawIO.ArrowStyle.Classic,
+      strokeColor: Colors.Blue,
     }),
   ],
 };

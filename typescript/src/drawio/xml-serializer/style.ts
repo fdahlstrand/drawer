@@ -68,6 +68,8 @@ const styleMapper = (function () {
     strokeWidth: numberMapper,
     startArrow: arrowStyleMapper,
     endArrow: arrowStyleMapper,
+    fillColor: stringMapper,
+    strokeColor: stringMapper,
   } as {
     [key in keyof Model.Style]: (key: string, value: StyleValue) => string;
   };
@@ -115,6 +117,8 @@ const stringMapper = (function () {
     startArrow: arrowStyleMapper(),
     endArrow: arrowStyleMapper(),
     whiteSpace: stringMapper(),
+    fillColor: stringMapper(),
+    strokeColor: stringMapper(),
   } as { [key: string]: (key: string, value: string) => Model.Style };
 })();
 

@@ -52,6 +52,8 @@ export interface Style {
   startArrow?: ArrowStyle;
   startFill?: Option;
   strokeWidth?: number;
+  fillColor?: string;
+  strokeColor?: string;
 }
 
 export interface MetaElement {
