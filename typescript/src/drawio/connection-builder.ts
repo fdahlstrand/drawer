@@ -1,6 +1,6 @@
-import { Connection, Option, Point, Style } from "./model.js";
+import { Connection, ElementBuilder, Option, Point, Style } from "./model.js";
 
-export class ConnectionBuilder {
+export class ConnectionBuilder implements ElementBuilder {
   private connection: Connection;
 
   constructor(id: string, source: string, target: string) {

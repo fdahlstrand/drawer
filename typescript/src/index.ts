@@ -7,7 +7,7 @@ const diagram: DrawIO.Diagram = {
   name: "Page-Foo",
   shadows: DrawIO.No,
   elements: [
-    new DrawIO.ShapeBuilder("O1")
+    DrawIO.Rectangle("O1")
       .withLabel("<i>Hello: %foo%</i>")
       .withStyle({
         rounded: DrawIO.Yes,
@@ -15,11 +15,9 @@ const diagram: DrawIO.Diagram = {
         whiteSpace: "wrap",
       })
       .atPosition(320, 160)
-      .withSize(120, 60)
       .withPlaceholder("foo", 12)
-      .usePlaceholders()
-      .build(),
-    new DrawIO.ShapeBuilder("O2")
+      .usePlaceholders(),
+    DrawIO.Rectangle("O2")
       .withLabel("<b>Hello: %foo%</b>")
       .withStyle({
         rounded: DrawIO.No,
@@ -27,16 +25,11 @@ const diagram: DrawIO.Diagram = {
         whiteSpace: "wrap",
       })
       .atPosition(320, 320)
-      .withSize(120, 60)
       .withPlaceholder("foo", 2 * 12)
-      .usePlaceholders()
-      .build(),
-    new DrawIO.ConnectionBuilder("R1", "O1", "O2")
-      .withLabel("A connection")
-      .withStyle({
-        endArrow: DrawIO.ArrowStyle.Classic,
-      })
-      .build(),
+      .usePlaceholders(),
+    DrawIO.Connection("R1", "O1", "O2").withLabel("A connection").withStyle({
+      endArrow: DrawIO.ArrowStyle.Classic,
+    }),
   ],
 };
 

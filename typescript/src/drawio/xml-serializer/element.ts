@@ -4,14 +4,18 @@ import { Shape } from "./shape.js";
 import { Connection } from "./connection.js";
 
 export class Element {
-  static toXml(elem: Model.Element): Xml.MxElement {
-    switch (elem.kind) {
-      case "shape":
-        return Shape.toXml(elem);
-      case "connection":
-        return Connection.toXml(elem);
-      default:
-        return undefined;
+  static toXml(elem: Model.Element | Model.ElementBuilder): Xml.MxElement {
+    if (isElement(elem)) {
+      switch (elem.kind) {
+        case "shape":
+          return Shape.toXml(elem);
+        case "connection":
+          return Connection.toXml(elem);
+        default:
+          return undefined;
+      }
+    } else {
+      return Element.toXml(elem.build());
     }
   }
 
@@ -40,4 +44,10 @@ function determineType(
     if (isPropertySet(elem.object[0][":@"].edge)) return "connection";
     return undefined;
   }
+}
+
+function isElement(
+  obj: Model.Element | Model.ElementBuilder
+): obj is Model.Element {
+  return "kind" in obj;
 }

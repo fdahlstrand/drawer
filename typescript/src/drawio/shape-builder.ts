@@ -1,6 +1,6 @@
-import { Option, Shape, Style } from "./model.js";
+import { ElementBuilder, Option, Shape, Style } from "./model.js";
 
-export class ShapeBuilder {
+export class ShapeBuilder implements ElementBuilder {
   private shape: Shape;
   constructor(id: string) {
     this.shape = {

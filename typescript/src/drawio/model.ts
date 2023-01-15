@@ -80,10 +80,14 @@ export interface Connection extends MetaElement {
 
 export type Element = Shape | Connection;
 
+export interface ElementBuilder {
+  build(): Element;
+}
+
 export interface Diagram {
   identifier: string;
   name: string;
-  elements: (Shape | Connection)[];
+  elements: (Shape | Connection | ElementBuilder)[];
   shadows?: Option;
 }
 
