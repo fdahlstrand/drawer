@@ -2,12 +2,15 @@ import * as DrawIO from "./drawio/drawio.js";
 
 import fs from "node:fs";
 
-enum Colors {
-  Red = "#FF0000",
-  Green = "#00FF00",
-  Blue = "#0000FF",
-  None = "none",
-}
+const Colors = {
+  Red: "#FF0000",
+  Green: "#00FF00",
+  Blue: "#0000FF",
+  None: "none",
+} as const;
+
+const Yes = DrawIO.Yes;
+const No = DrawIO.No;
 
 const diagram: DrawIO.Diagram = {
   identifier: "P1",
@@ -17,8 +20,8 @@ const diagram: DrawIO.Diagram = {
     DrawIO.Rectangle("O1")
       .withLabel("<i>Hello: %foo%</i>")
       .withStyle({
-        rounded: DrawIO.Yes,
-        html: DrawIO.Yes,
+        rounded: Yes,
+        html: Yes,
         whiteSpace: "wrap",
         fillColor: Colors.None,
         strokeColor: Colors.Green,
@@ -29,8 +32,8 @@ const diagram: DrawIO.Diagram = {
     DrawIO.Rectangle("O2")
       .withLabel("<b>Hello: %foo%</b>")
       .withStyle({
-        rounded: DrawIO.No,
-        html: DrawIO.Yes,
+        rounded: No,
+        html: Yes,
         whiteSpace: "wrap",
         fillColor: Colors.Blue,
         strokeColor: Colors.None,

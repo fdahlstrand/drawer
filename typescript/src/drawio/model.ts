@@ -8,39 +8,41 @@ export interface Size {
   height: number;
 }
 
-export enum ArrowStyle {
-  None,
-  Classic,
-  ClassicThin,
-  Open,
-  OpenThin,
-  OpenAsync,
-  Block,
-  BlockThin,
-  Async,
-  Oval,
-  Diamond,
-  DiamondThin,
-  Box,
-  HalfCircle,
-  Dash,
-  Cross,
-  CirclePlus,
-  Circle,
-  BaseDash,
-  ERone,
-  ERmandOne,
-  ERmany,
-  ERoneToMany,
-  ERzeroToOne,
-  ERzeroToMany,
-  DoubleBlock,
-}
+export const ArrowStyle = {
+  None: "None",
+  Classic: "Classic",
+  ClassicThin: "ClassicThin",
+  Open: "Open",
+  OpenThin: "OpenThin",
+  OpenAsync: "OpenAsync",
+  Block: "Block",
+  BlockThin: "BlockThin",
+  Async: "Async",
+  Oval: "Oval",
+  Diamond: "Diamond",
+  DiamondThin: "DiamondThin",
+  Box: "Box",
+  HalfCircle: "HalfCircle",
+  Dash: "Dash",
+  Cross: "Cross",
+  CirclePlus: "CirclePlus",
+  Circle: "Circle",
+  BaseDash: "BaseDash",
+  ERone: "ERone",
+  ERmandOne: "ERmandOne",
+  ERmany: "ERmany",
+  ERoneToMany: "ERoneToMany",
+  ERzeroToOne: "ERzeroToOne",
+  ERzeroToMany: "ERzeroToMany",
+  DoubleBlock: "DoubleBlock",
+} as const;
+export type ArrowStyle = (typeof ArrowStyle)[keyof typeof ArrowStyle];
 
-export enum Option {
-  No,
-  Yes,
-}
+export const Option = {
+  Yes: 1,
+  No: 0,
+} as const;
+export type Option = (typeof Option)[keyof typeof Option];
 
 export interface Style {
   name?: string;

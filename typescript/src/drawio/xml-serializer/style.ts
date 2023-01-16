@@ -35,94 +35,7 @@ export class Style {
   }
 }
 
-const styleMapper = (function () {
-  function optionMapper(key: string, value: Model.Option): string {
-    return `${key}=${value === Model.Option.Yes ? "1" : "0"}`;
-  }
-
-  function arrowStyleMapper(key: string, value: Model.ArrowStyle): string {
-    const v = Model.ArrowStyle[value] as keyof typeof Model.ArrowStyle;
-    return `${key}=${arrowStyleMap[v]}`;
-  }
-
-  function numberMapper(key: string, value: number): string {
-    return `${key}=${value}`;
-  }
-
-  function stringMapper(key: string, value: string): string {
-    return `${key}=${value}`;
-  }
-
-  function styleNameMapper(key: string, value: string): string {
-    return `${value}`;
-  }
-
-  type StyleValue = number | string | Model.ArrowStyle;
-  return {
-    name: styleNameMapper,
-    html: optionMapper,
-    rounded: optionMapper,
-    whiteSpace: stringMapper,
-    startFill: optionMapper,
-    endFill: optionMapper,
-    strokeWidth: numberMapper,
-    startArrow: arrowStyleMapper,
-    endArrow: arrowStyleMapper,
-    fillColor: stringMapper,
-    strokeColor: stringMapper,
-  } as {
-    [key in keyof Model.Style]: (key: string, value: StyleValue) => string;
-  };
-})();
-
-const stringMapper = (function () {
-  function numberMapper(property?: keyof Model.Style) {
-    return (key: string, value: string): Model.Style => ({
-      [property ?? key]: Number(value),
-    });
-  }
-
-  function stringMapper(property?: keyof Model.Style) {
-    return (key: string, value: string): Model.Style => ({
-      [property ?? key]: value,
-    });
-  }
-
-  function optionMapper(property?: keyof Model.Style) {
-    return (key: string, value: string): Model.Style => ({
-      [property ?? key]: value === "1" ? Model.Option.Yes : Model.Option.No,
-    });
-  }
-
-  function arrowStyleMapper(property?: keyof Model.Style) {
-    return (key: string, value: string): Model.Style => {
-      let k: keyof typeof Model.ArrowStyle;
-      for (k in arrowStyleMap) {
-        if (value === arrowStyleMap[k]) {
-          return {
-            [property ?? key]:
-              Model.ArrowStyle[k as keyof typeof Model.ArrowStyle],
-          };
-        }
-      }
-    };
-  }
-
-  return {
-    html: optionMapper(),
-    rounded: optionMapper(),
-    startFill: optionMapper(),
-    endFill: optionMapper(),
-    strokeWidth: numberMapper(),
-    startArrow: arrowStyleMapper(),
-    endArrow: arrowStyleMapper(),
-    whiteSpace: stringMapper(),
-    fillColor: stringMapper(),
-    strokeColor: stringMapper(),
-  } as { [key: string]: (key: string, value: string) => Model.Style };
-})();
-
-const arrowStyleMap: { [key in keyof typeof Model.ArrowStyle]: string } = {
+const sourceArrowStyleMap: Mapper<Model.ArrowStyle> = {
   None: "none",
   Classic: "classic",
   ClassicThin: "classicThin",
@@ -150,3 +63,95 @@ const arrowStyleMap: { [key in keyof typeof Model.ArrowStyle]: string } = {
   ERzeroToMany: "ERzeroToMany",
   DoubleBlock: "doubleBlock",
 };
+const targetArrowStyleMap = reverseMap(sourceArrowStyleMap);
+
+const styleMapper = (function () {
+  function optionMapper(key: string, value: Model.Option): string {
+    return `${key}=${value === Model.Option.Yes ? "1" : "0"}`;
+  }
+
+  function enumMapper<T extends string>(map: Mapper<T>) {
+    return (key: string, value: T): string => {
+      return `${key}=${map[value]}`;
+    };
+  }
+
+  function numberMapper(key: string, value: number): string {
+    return `${key}=${value}`;
+  }
+
+  function stringMapper(key: string, value: string): string {
+    return `${key}=${value}`;
+  }
+
+  function styleNameMapper(key: string, value: string): string {
+    return `${value}`;
+  }
+
+  type StyleValue = number | string | Model.ArrowStyle;
+  return {
+    name: styleNameMapper,
+    html: optionMapper,
+    rounded: optionMapper,
+    whiteSpace: stringMapper,
+    startFill: optionMapper,
+    endFill: optionMapper,
+    strokeWidth: numberMapper,
+    startArrow: enumMapper(sourceArrowStyleMap),
+    endArrow: enumMapper(sourceArrowStyleMap),
+    fillColor: stringMapper,
+    strokeColor: stringMapper,
+  } as {
+    [key in keyof Model.Style]: (key: string, value: StyleValue) => string;
+  };
+})();
+
+const stringMapper = (function () {
+  function numberMapper(property?: keyof Model.Style) {
+    return (key: string, value: string): Model.Style => ({
+      [property ?? key]: Number(value),
+    });
+  }
+
+  function stringMapper(property?: keyof Model.Style) {
+    return (key: string, value: string): Model.Style => ({
+      [property ?? key]: value,
+    });
+  }
+
+  function optionMapper(property?: keyof Model.Style) {
+    return (key: string, value: string): Model.Style => ({
+      [property ?? key]: value === "1" ? Model.Option.Yes : Model.Option.No,
+    });
+  }
+
+  function enumMapper<T extends string>(
+    map: ReverseMapper<T>,
+    property?: keyof Model.Style
+  ) {
+    return (key: string, value: string) => ({
+      [property ?? key]: map[value],
+    });
+  }
+
+  return {
+    html: optionMapper(),
+    rounded: optionMapper(),
+    startFill: optionMapper(),
+    endFill: optionMapper(),
+    strokeWidth: numberMapper(),
+    startArrow: enumMapper(targetArrowStyleMap),
+    endArrow: enumMapper(targetArrowStyleMap),
+    whiteSpace: stringMapper(),
+    fillColor: stringMapper(),
+    strokeColor: stringMapper(),
+  } as { [key: string]: (key: string, value: string) => Model.Style };
+})();
+
+type Mapper<T extends string> = { [k in T]: string };
+type ReverseMapper<T extends string> = { [k: string]: T };
+function reverseMap<T extends string>(src: Mapper<T>): ReverseMapper<T> {
+  return Object.fromEntries(
+    Object.entries(src).map((e) => [e[1], e[0] as T])
+  );
+}
