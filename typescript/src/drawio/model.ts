@@ -59,6 +59,7 @@ export interface Style {
   dashed?: Option;
   dashPattern?: number[];
   perimeterSpacing?: number;
+  opacity?: number;
 }
 
 export interface MetaElement {

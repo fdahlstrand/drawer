@@ -40,6 +40,7 @@ const diagram: DrawIO.Diagram = {
         whiteSpace: "wrap",
         fillColor: Colors.Blue,
         strokeColor: Colors.None,
+        opacity: 25,
       })
       .atPosition(320, 320)
       .withPlaceholder("foo", 2 * 12)

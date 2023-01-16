@@ -108,6 +108,7 @@ const styleMapper = (function () {
     dashed: optionMapper,
     dashPattern: arrayMapper,
     perimeterSpacing: numberMapper,
+    opacity: numberMapper,
   } as {
     [key in keyof Model.Style]: (key: string, value: StyleValue) => string;
   };
@@ -161,6 +162,7 @@ const stringMapper = (function () {
     dashed: optionMapper(),
     dashPattern: arrayMapper(),
     perimeterSpacing: numberMapper(),
+    opacity: numberMapper(),
   } as { [key: string]: (key: string, value: string) => Model.Style };
 })();
 
