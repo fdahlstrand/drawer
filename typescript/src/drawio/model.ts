@@ -56,6 +56,8 @@ export interface Style {
   strokeWidth?: number;
   fillColor?: string;
   strokeColor?: string;
+  dashed?: Option;
+  dashPattern?: number[];
 }
 
 export interface MetaElement {

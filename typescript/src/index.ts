@@ -25,6 +25,8 @@ const diagram: DrawIO.Diagram = {
         whiteSpace: "wrap",
         fillColor: Colors.None,
         strokeColor: Colors.Green,
+        dashed: Yes,
+        dashPattern: [5, 2, 1, 2],
       })
       .atPosition(320, 160)
       .withPlaceholder("foo", 12)

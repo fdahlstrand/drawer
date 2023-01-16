@@ -88,7 +88,11 @@ const styleMapper = (function () {
     return `${value}`;
   }
 
-  type StyleValue = number | string | Model.ArrowStyle;
+  function arrayMapper(key: string, value: number[]): string {
+    return `${key}=${value.join(" ")}`;
+  }
+
+  type StyleValue = number | string | Model.ArrowStyle | number[];
   return {
     name: styleNameMapper,
     html: optionMapper,
@@ -101,6 +105,8 @@ const styleMapper = (function () {
     endArrow: enumMapper(sourceArrowStyleMap),
     fillColor: stringMapper,
     strokeColor: stringMapper,
+    dashed: optionMapper,
+    dashPattern: arrayMapper,
   } as {
     [key in keyof Model.Style]: (key: string, value: StyleValue) => string;
   };
@@ -134,6 +140,12 @@ const stringMapper = (function () {
     });
   }
 
+  function arrayMapper(property?: keyof Model.Style) {
+    return (key: string, value: string): Model.Style => ({
+      [property ?? key]: value.split(" ").map((s) => Number(s)),
+    });
+  }
+
   return {
     html: optionMapper(),
     rounded: optionMapper(),
@@ -145,6 +157,8 @@ const stringMapper = (function () {
     whiteSpace: stringMapper(),
     fillColor: stringMapper(),
     strokeColor: stringMapper(),
+    dashed: optionMapper(),
+    dashPattern: arrayMapper(),
   } as { [key: string]: (key: string, value: string) => Model.Style };
 })();
 
