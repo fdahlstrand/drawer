@@ -90,8 +90,8 @@ function fromXmlAsCell(elem: Xml.MxCell): Model.Element {
     label: elem[":@"].value,
     style: Style.parse(elem[":@"].style),
     position: {
-      x: Number(elem.mxCell[0][":@"].x),
-      y: Number(elem.mxCell[0][":@"].y),
+      x: Number(elem.mxCell[0][":@"].x ?? 0),
+      y: Number(elem.mxCell[0][":@"].y ?? 0),
     },
     size: {
       width: Number(elem.mxCell[0][":@"].width),
@@ -110,8 +110,8 @@ function fromXmlAsObject(obj: Xml.MxObject): Model.Element {
     label: obj[":@"].label,
     style: Style.parse(obj.object[0][":@"].style),
     position: {
-      x: Number(cell.x),
-      y: Number(cell.y),
+      x: Number(cell.x ?? 0),
+      y: Number(cell.y ?? 0),
     },
     size: {
       width: Number(cell.width),
