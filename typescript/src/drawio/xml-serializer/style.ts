@@ -107,6 +107,7 @@ const styleMapper = (function () {
     strokeColor: stringMapper,
     dashed: optionMapper,
     dashPattern: arrayMapper,
+    perimeterSpacing: numberMapper,
   } as {
     [key in keyof Model.Style]: (key: string, value: StyleValue) => string;
   };
@@ -159,6 +160,7 @@ const stringMapper = (function () {
     strokeColor: stringMapper(),
     dashed: optionMapper(),
     dashPattern: arrayMapper(),
+    perimeterSpacing: numberMapper(),
   } as { [key: string]: (key: string, value: string) => Model.Style };
 })();
 

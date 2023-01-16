@@ -58,6 +58,7 @@ export interface Style {
   strokeColor?: string;
   dashed?: Option;
   dashPattern?: number[];
+  perimeterSpacing?: number;
 }
 
 export interface MetaElement {

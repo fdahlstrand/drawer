@@ -27,6 +27,7 @@ const diagram: DrawIO.Diagram = {
         strokeColor: Colors.Green,
         dashed: Yes,
         dashPattern: [5, 2, 1, 2],
+        perimeterSpacing: 12,
       })
       .atPosition(320, 160)
       .withPlaceholder("foo", 12)
