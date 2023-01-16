@@ -49,6 +49,16 @@ export const FillStyle = {
 } as const;
 export type FillStyle = (typeof FillStyle)[keyof typeof FillStyle];
 
+export const GradientDirection = {
+  Radial: "Radial",
+  North: "North",
+  East: "East",
+  West: "West",
+  South: "South",
+} as const;
+export type GradientDirection =
+  (typeof GradientDirection)[keyof typeof GradientDirection];
+
 export const Option = {
   Yes: 1,
   No: 0,
@@ -72,6 +82,8 @@ export interface Style {
   dashPattern?: number[];
   perimeterSpacing?: number;
   opacity?: number;
+  gradientColor?: string;
+  gradientDirection?: GradientDirection;
 }
 
 export interface MetaElement {

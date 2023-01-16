@@ -76,6 +76,15 @@ const sourceFillStyleMap: Mapper<Model.FillStyle> = {
 };
 const targetFillStyleMap = reverseMap(sourceFillStyleMap);
 
+const sourceGradientDirectionMap: Mapper<Model.GradientDirection> = {
+  East: "east",
+  North: "north",
+  Radial: "radial",
+  South: "south",
+  West: "west",
+};
+const targetGradientDirectionMap = reverseMap(sourceGradientDirectionMap);
+
 const styleMapper = (function () {
   function optionMapper(key: string, value: Model.Option): string {
     return `${key}=${value === Model.Option.Yes ? "1" : "0"}`;
@@ -121,6 +130,8 @@ const styleMapper = (function () {
     dashPattern: arrayMapper,
     perimeterSpacing: numberMapper,
     opacity: numberMapper,
+    gradientColor: stringMapper,
+    gradientDirection: enumMapper(sourceGradientDirectionMap),
   } as {
     [key in keyof Model.Style]: (key: string, value: StyleValue) => string;
   };
@@ -176,6 +187,8 @@ const stringMapper = (function () {
     dashPattern: arrayMapper(),
     perimeterSpacing: numberMapper(),
     opacity: numberMapper(),
+    gradientColor: stringMapper(),
+    gradientDirection: enumMapper(targetGradientDirectionMap),
   } as { [key: string]: (key: string, value: string) => Model.Style };
 })();
 
