@@ -39,6 +39,7 @@ const diagram: DrawIO.Diagram = {
         html: Yes,
         whiteSpace: "wrap",
         fillColor: Colors.Blue,
+        fillStyle: DrawIO.FillStyle.CrossHatch,
         strokeColor: Colors.None,
         opacity: 25,
       })

@@ -38,6 +38,17 @@ export const ArrowStyle = {
 } as const;
 export type ArrowStyle = (typeof ArrowStyle)[keyof typeof ArrowStyle];
 
+export const FillStyle = {
+  None: "None",
+  Hatch: "Hatch",
+  Solid: "Solid",
+  Dots: "Dots",
+  CrossHatch: "CrossHatch",
+  Dashed: "Dashed",
+  ZigZag: "ZigZag",
+} as const;
+export type FillStyle = (typeof FillStyle)[keyof typeof FillStyle];
+
 export const Option = {
   Yes: 1,
   No: 0,
@@ -55,6 +66,7 @@ export interface Style {
   startFill?: Option;
   strokeWidth?: number;
   fillColor?: string;
+  fillStyle?: FillStyle;
   strokeColor?: string;
   dashed?: Option;
   dashPattern?: number[];

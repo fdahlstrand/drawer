@@ -65,6 +65,17 @@ const sourceArrowStyleMap: Mapper<Model.ArrowStyle> = {
 };
 const targetArrowStyleMap = reverseMap(sourceArrowStyleMap);
 
+const sourceFillStyleMap: Mapper<Model.FillStyle> = {
+  None: "none",
+  Solid: "solid",
+  CrossHatch: "cross-hatch",
+  Dashed: "dashed",
+  Dots: "dots",
+  Hatch: "hatch",
+  ZigZag: "zigzag-line",
+};
+const targetFillStyleMap = reverseMap(sourceFillStyleMap);
+
 const styleMapper = (function () {
   function optionMapper(key: string, value: Model.Option): string {
     return `${key}=${value === Model.Option.Yes ? "1" : "0"}`;
@@ -104,6 +115,7 @@ const styleMapper = (function () {
     startArrow: enumMapper(sourceArrowStyleMap),
     endArrow: enumMapper(sourceArrowStyleMap),
     fillColor: stringMapper,
+    fillStyle: enumMapper(sourceFillStyleMap),
     strokeColor: stringMapper,
     dashed: optionMapper,
     dashPattern: arrayMapper,
@@ -158,6 +170,7 @@ const stringMapper = (function () {
     endArrow: enumMapper(targetArrowStyleMap),
     whiteSpace: stringMapper(),
     fillColor: stringMapper(),
+    fillStyle: enumMapper(targetFillStyleMap),
     strokeColor: stringMapper(),
     dashed: optionMapper(),
     dashPattern: arrayMapper(),
