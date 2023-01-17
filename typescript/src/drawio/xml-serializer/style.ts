@@ -11,11 +11,15 @@ export class Style {
         console.error(`Property ${property} is not implemented.`);
       }
     }
-    return st.join(";") + ";";
+    if (st.length > 0) {
+      return st.join(";") + ";";
+    }
+
+    return "";
   }
 
   static parse(str: string): Model.Style {
-    const elems = str.split(";").filter((e) => e !== "");
+    const elems = str ? str.split(";").filter((e) => e !== "") : [];
     let s: Model.Style = {};
 
     elems.forEach((e) => {
