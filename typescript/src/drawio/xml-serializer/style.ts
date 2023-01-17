@@ -132,6 +132,7 @@ const styleMapper = (function () {
     opacity: numberMapper,
     gradientColor: stringMapper,
     gradientDirection: enumMapper(sourceGradientDirectionMap),
+    shape: stringMapper,
   } as {
     [key in keyof Model.Style]: (key: string, value: StyleValue) => string;
   };
@@ -189,6 +190,7 @@ const stringMapper = (function () {
     opacity: numberMapper(),
     gradientColor: stringMapper(),
     gradientDirection: enumMapper(targetGradientDirectionMap),
+    shape: stringMapper(),
   } as { [key: string]: (key: string, value: string) => Model.Style };
 })();
 

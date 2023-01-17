@@ -48,6 +48,13 @@ const diagram: DrawIO.Diagram = {
       .atPosition(320, 320)
       .withPlaceholder("foo", 2 * 12)
       .usePlaceholders(),
+    DrawIO.Shape("A1")
+      .withLabel("Yada")
+      .withStyle({
+        shape: "umlActor",
+      })
+      .atPosition(100, 100)
+      .withSize(30, 60),
     DrawIO.Connection("R1", "O1", "O2").withLabel("A connection").withStyle({
       endArrow: DrawIO.ArrowStyle.Classic,
       strokeColor: Colors.Blue,

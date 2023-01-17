@@ -84,6 +84,7 @@ export interface Style {
   opacity?: number;
   gradientColor?: string;
   gradientDirection?: GradientDirection;
+  shape?: string;
 }
 
 export interface MetaElement {
