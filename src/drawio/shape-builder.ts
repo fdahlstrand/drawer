@@ -1,4 +1,4 @@
-import { ElementBuilder, Option, Shape, Style } from "./model.js";
+import { ElementBuilder, Shape, Style, Yes } from "./model.js";
 
 export class ShapeBuilder implements ElementBuilder {
   private shape: Shape;
@@ -46,7 +46,7 @@ export class ShapeBuilder implements ElementBuilder {
   usePlaceholders(): ShapeBuilder {
     this.shape = {
       ...this.shape,
-      enablePlaceholders: Option.Yes,
+      enablePlaceholders: Yes,
     };
 
     return this;

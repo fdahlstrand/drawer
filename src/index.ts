@@ -1,10 +1,10 @@
 import {
-  ArrowStyle,
+  ArrowClassic,
   Connection,
   Diagram,
-  FillStyle,
-  GradientDirection,
+  FillCrossHatch,
   No,
+  Radial,
   Rectangle,
   Shape,
   XmlSerializer,
@@ -12,9 +12,6 @@ import {
 } from "./drawio/drawio.js";
 
 import fs from "node:fs";
-
-// TODO: Typing worth looking into to reduce repetetive and error-prone code
-// https://www.typescriptlang.org/play?target=7#code/MYewdgzgLgBAwjAvDA3gKBjAGgLhgIgA98AaDGATT3wE9TyAtagL3zQF8YBDCGUSKAG40UGgAcApvCQxRkkADN4AbQDWEmotniJWuAF00InTADKogDYTeyZeWX4upGGACuAWwBGEgE76ymA6ezp4gIFZcYP72+MDOBgEwDgAmzm5evtGB+BJpHt5+iQ4KeRmFMQDmpQVZSfgAFtWZRfgAlk3l2QBWHbUOqr0tFoMx7iPZYON1ICP6wsaSMACyXOoA8p5dEsBQADwAKjAShFASYMm8ytA+rWAVJNxgNPrK+gB8MofHp+eXtwq+GAAMVaPmgRxOZwuSWut3uj2eDwAdCj-oCAErWWDfKGXWF3B6RZ6vfQwAD8qGUAAUYLdgaDoMoAAz6fR4EFgqDKACM+k4ADJlqsJBstjtdpjoB88K4wKowCAAO5geZyKTmGhWGRUrg+KCtLgWXYoam0sAwdSaJQrdabbZ7DVWCBvNlC21ih2Waxval8t5oAD0AbVZi92t1+sNuxtIrt4sd3v9CykKzEkh8BwhP2hVygNwJCJe-hgAFUPsgvpDfkk0T4YABpLO4mD4+FEovkmCY0A+ZK7esPMswPBgCQAN18whDmInYIkqfTmZx1dz+bbTyL5ZglezfzAALrjeX0NbD1rMAAah2KSbVDhW6765wR+PJ0YFLKdq1wDAfK+56mS5Vjmp6Fq8bwABQQD4wB4AuvgHA8rZvAAlHgM6+BA85cGmCH7B86CYH+UCuD45qivaSIKD4IDuAAomAeatNYEHkJgFE7EiZxMSx0HAChSLuDhEEQRIKFIB8ygSDyxbSSy+goeQ4k8F2-5YfBGb4cI7BGCGFBcMkXBAbuMJMQW7bgZ8TYrueHLgseeJmeuiIwCiSLnpK2LAY5a6EhuJKdiaNJ0nZXLyXgEGWngoFjuyDJcry4mIB8rYCpQBlGZ50owLK8pKiqRhoPw4JAnBOGLgmEBIU5W6Edw1AAIL0JgnjUAAQs1fDUHAbA6cVsDojIf6zupwlAopRXgBA4QSEiFggBUMAQeiDhNQphX9S2eAJjIdVcHg3IAEyJK1sg+K4EiJLB8BIlgHBAA
 
 const Colors = {
   Red: "#FF0000",
@@ -36,7 +33,7 @@ const diagram: Diagram = {
         whiteSpace: "wrap",
         fillColor: "#009900",
         gradientColor: Colors.Green,
-        gradientDirection: GradientDirection.Radial,
+        gradientDirection: Radial,
         strokeColor: Colors.Green,
         dashed: Yes,
         dashPattern: [5, 2, 1, 2],
@@ -52,7 +49,7 @@ const diagram: Diagram = {
         html: Yes,
         whiteSpace: "wrap",
         fillColor: Colors.Blue,
-        fillStyle: FillStyle.CrossHatch,
+        fillStyle: FillCrossHatch,
         strokeColor: Colors.None,
         opacity: 25,
       })
@@ -67,7 +64,7 @@ const diagram: Diagram = {
       .atPosition(100, 100)
       .withSize(30, 60),
     Connection("R1", "O1", "O2").withLabel("A connection").withStyle({
-      endArrow: ArrowStyle.Classic,
+      endArrow: ArrowClassic,
       strokeColor: Colors.Blue,
     }),
   ],

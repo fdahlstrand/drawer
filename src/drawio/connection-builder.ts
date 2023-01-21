@@ -1,4 +1,4 @@
-import { Connection, ElementBuilder, Option, Point, Style } from "./model.js";
+import { Connection, ElementBuilder, Point, Style, Yes } from "./model.js";
 
 export class ConnectionBuilder implements ElementBuilder {
   private connection: Connection;
@@ -31,7 +31,7 @@ export class ConnectionBuilder implements ElementBuilder {
   usePlaceholders(): ConnectionBuilder {
     this.connection = {
       ...this.connection,
-      enablePlaceholders: Option.Yes,
+      enablePlaceholders: Yes,
     };
 
     return this;

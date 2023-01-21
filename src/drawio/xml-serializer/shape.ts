@@ -6,7 +6,7 @@ export class Shape {
   static toXml(shape: Model.Shape): Xml.MxElement {
     if (
       shape.placeholders?.size > 0 ||
-      shape?.enablePlaceholders === Model.Option.Yes
+      shape?.enablePlaceholders === Model.Yes
     ) {
       return toXmlAsObject(shape);
     } else {
@@ -50,7 +50,7 @@ function toXmlAsCell(shape: Model.Shape): Xml.MxCell {
 function toXmlAsObject(shape: Model.Shape): Xml.MxObject {
   const placeholders = Object.fromEntries(shape.placeholders ?? []);
   const enablePlaceholders =
-    shape.enablePlaceholders === Model.Option.No ? "0" : "1";
+    shape.enablePlaceholders === Model.No ? "0" : "1";
 
   return {
     ":@": {
@@ -117,8 +117,7 @@ function fromXmlAsObject(obj: Xml.MxObject): Model.Element {
       width: Number(cell.width),
       height: Number(cell.height),
     },
-    enablePlaceholders:
-      obj[":@"].placeholders === "1" ? Model.Option.Yes : Model.Option.No,
+    enablePlaceholders: obj[":@"].placeholders === "1" ? Model.Yes : Model.No,
     placeholders,
   };
 }

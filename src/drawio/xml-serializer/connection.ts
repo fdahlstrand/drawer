@@ -6,7 +6,7 @@ export class Connection {
   static toXml(connection: Model.Connection): Xml.MxElement {
     if (
       connection.placeholders?.size > 0 ||
-      connection?.enablePlaceholders === Model.Option.Yes
+      connection?.enablePlaceholders === Model.Yes
     ) {
       return toXmlAsObject(connection);
     } else {
@@ -56,7 +56,7 @@ function toXmlAsCell(connection: Model.Connection): Xml.MxCell {
 function toXmlAsObject(connection: Model.Connection): Xml.MxObject {
   const placeholders = Object.fromEntries(connection.placeholders ?? []);
   const enablePlaceholders =
-    connection.enablePlaceholders === Model.Option.No ? "0" : "1";
+    connection.enablePlaceholders === Model.No ? "0" : "1";
   const srcPoint = toXmlPoint(connection.sourcePoint, "sourcePoint");
   const tgtPoint = toXmlPoint(connection.targetPoint, "targetPoint");
   const waypoints = toXmlPointList(connection.waypoints);
@@ -124,7 +124,7 @@ function fromXmlAsObject(obj: Xml.MxObject): Model.Connection {
     targetPoint: pointFromXmlGeometry(cell.mxGeometry, "targetPoint"),
     waypoints: arrayFromXmlGeometry(cell.mxGeometry),
     enablePlaceholders:
-      obj[":@"].placeholders === "1" ? Model.Option.Yes : Model.Option.No,
+      obj[":@"].placeholders === "1" ? Model.Yes : Model.No,
     placeholders: placeholdersFromXml(obj),
   };
 }

@@ -1,12 +1,8 @@
 import { ConnectionBuilder } from "./connection-builder.js";
-import { Option } from "./model.js";
 import { ShapeBuilder } from "./shape-builder.js";
 
 export { XmlSerializer } from "./xml-serializer/serializer.js";
 export * from "./model.js";
-
-export const Yes = Option.Yes;
-export const No = Option.No;
 
 export function Shape(id: string): ShapeBuilder {
   return new ShapeBuilder(id);

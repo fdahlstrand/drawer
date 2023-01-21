@@ -4,7 +4,7 @@ import { Element } from "./element.js";
 
 export class Diagram {
   static toXml(diagram: Model.Diagram): Xml.Diagram {
-    const option = (o: Model.Option) => (o === Model.Option.Yes ? "1" : "0");
+    const option = (o: Model.Option) => (o === Model.Yes ? "1" : "0");
     return {
       ":@": {
         id: diagram.identifier,
@@ -42,8 +42,7 @@ export class Diagram {
   }
 
   static fromXml(diagram: Xml.Diagram): Model.Diagram {
-    const option = (o: "0" | "1") =>
-      o === "1" ? Model.Option.Yes : Model.Option.No;
+    const option = (o: "0" | "1") => (o === "1" ? Model.Yes : Model.No);
     return {
       identifier: diagram[":@"].id,
       name: diagram[":@"].name,
