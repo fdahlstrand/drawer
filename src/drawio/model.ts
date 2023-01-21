@@ -1,12 +1,12 @@
-export interface Point {
+export type Point = {
   x: number;
   y: number;
-}
+};
 
-export interface Size {
+export type Size = {
   width: number;
   height: number;
-}
+};
 
 export const ArrowStyle = {
   None: "None",
@@ -65,65 +65,73 @@ export const Option = {
 } as const;
 export type Option = (typeof Option)[keyof typeof Option];
 
-export interface Style {
-  name?: string;
-  rounded?: Option;
-  html?: Option;
-  whiteSpace?: "wrap";
-  endArrow?: ArrowStyle;
-  endFill?: Option;
-  startArrow?: ArrowStyle;
-  startFill?: Option;
-  strokeWidth?: number;
-  fillColor?: string;
-  fillStyle?: FillStyle;
-  strokeColor?: string;
-  dashed?: Option;
-  dashPattern?: number[];
-  perimeterSpacing?: number;
-  opacity?: number;
-  gradientColor?: string;
-  gradientDirection?: GradientDirection;
-  shape?: string;
-}
+export type Styles = [
+  ["name", string],
+  ["rounded", Option],
+  ["html", Option],
+  ["whiteSpace", "wrap"],
+  ["endArrow", ArrowStyle],
+  ["startArrow", ArrowStyle],
+  ["endFill", Option],
+  ["startFill", Option],
+  ["strokeWidth", number],
+  ["fillColor", string],
+  ["fillStyle", FillStyle],
+  ["strokeColor", string],
+  ["dashed", Option],
+  ["dashPattern", number[]],
+  ["perimeterSpacing", number],
+  ["opacity", number],
+  ["gradientColor", string],
+  ["gradientDirection", GradientDirection],
+  ["shape", string]
+];
+type MakeObject<T extends [string, unknown][]> = T extends [
+  infer First extends [string, unknown],
+  ...infer Rest extends [string, unknown][]
+]
+  ? { [P in First[0]]: First[1] } & MakeObject<Rest>
+  : unknown;
 
-export interface MetaElement {
+export type Style = Partial<MakeObject<Styles>>;
+
+type MetaElement = {
   kind: "shape" | "connection";
   identifier: string;
   label: string;
   style: Style;
   enablePlaceholders?: Option;
   placeholders?: Map<string, string>;
-}
+};
 
-export interface Shape extends MetaElement {
+export type Shape = {
   kind: "shape";
   size?: Size;
   position?: Point;
-}
+} & MetaElement;
 
-export interface Connection extends MetaElement {
+export type Connection = {
   kind: "connection";
   source: string;
   target: string;
   sourcePoint?: Point;
   targetPoint?: Point;
   waypoints?: Point[];
-}
+} & MetaElement;
 
 export type Element = Shape | Connection;
 
-export interface ElementBuilder {
+export type ElementBuilder = {
   build(): Element;
-}
+};
 
-export interface Diagram {
+export type Diagram = {
   identifier: string;
   name: string;
   elements: (Shape | Connection | ElementBuilder)[];
   shadows?: Option;
-}
+};
 
-export interface File {
+export type File = {
   diagrams: Diagram[];
-}
+};
