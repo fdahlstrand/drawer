@@ -2,62 +2,6 @@ import { No, Yes } from "../../src/drawio/drawio.js";
 import { Style } from "../../src/drawio/xml-serializer/style.js";
 import * as Model from "../../src/drawio/model.js";
 
-const options = ["html", "rounded", "startFill", "endFill", "dashed"];
-const numbers = ["opacity", "strokeWidth", "perimeterSpacing"];
-const strings = [
-  "whiteSpace",
-  "fillColor",
-  "strokeColor",
-  "gradientColor",
-  "shape",
-];
-
-type SelectProperty<T extends object, U> = {
-  [P in keyof Required<T>]: Required<T>[P] extends U ? P : never;
-}[keyof T];
-
-type StringifyTestFn<T> = (
-  property: string,
-  value: T,
-  target?: string
-) => void;
-type StringifyProperty<T> = Record<
-  SelectProperty<Model.Style, T>,
-  StringifyTestFn<T>
->;
-
-function testStringifyProperty<T>(
-  property: string,
-  value: T,
-  target = String(value)
-) {
-  expect(Style.stringify({ [property]: value })).toBe(
-    `${property}=${target};`
-  );
-}
-
-type F<E extends symbol> = Record<
-  E,
-  { mapped: string; fn: StringifyEnumTestFn<E> }
->;
-type StringifyEnumTestFn<E> = (
-  property: string,
-  value: E,
-  str: string
-) => void;
-function testStringifyEnumValue<E>(property: string, value: E, str: string) {
-  expect(Style.stringify({ [property]: value })).toBe(`${property}=${str};`);
-}
-
-function _enum<E>(mapped: string, fn: StringifyEnumTestFn<E>) {
-  return { mapped, fn };
-}
-
-const optionsx: F<Model.Option> = {
-  [Model.Yes]: _enum("1", testStringifyEnumValue),
-  [Model.No]: _enum("0", testStringifyEnumValue),
-};
-
 describe("Stringify style", () => {
   test("empty style generates nothing", () => {
     expect(Style.stringify({})).toBe("");
@@ -85,58 +29,45 @@ describe("Stringify style", () => {
 
   describe("numeric style properties", () => {
     const numberProperties: StringifyProperty<number> = {
-      opacity: testStringifyProperty,
-      perimeterSpacing: testStringifyProperty,
-      strokeWidth: testStringifyProperty,
+      opacity: stringifyExpectation,
+      perimeterSpacing: stringifyExpectation,
+      strokeWidth: stringifyExpectation,
     };
 
-    let k: keyof typeof numberProperties;
-    for (k in numberProperties) {
-      it(`can stringify property ${k}`, () => {
-        numberProperties[k](k, 19);
-      });
-    }
+    itStringifiesProperties(numberProperties, 19);
   });
 
   describe("string style properties", () => {
     const stringProperties: Omit<StringifyProperty<string>, "name"> = {
-      fillColor: testStringifyProperty,
-      gradientColor: testStringifyProperty,
-      shape: testStringifyProperty,
-      strokeColor: testStringifyProperty,
-      whiteSpace: testStringifyProperty,
+      fillColor: stringifyExpectation,
+      gradientColor: stringifyExpectation,
+      shape: stringifyExpectation,
+      strokeColor: stringifyExpectation,
+      whiteSpace: stringifyExpectation,
     };
 
-    let k: keyof typeof stringProperties;
-    for (k in stringProperties) {
-      it(`can stringify property '${k}'`, () => {
-        stringProperties[k](k, "foo");
-      });
-    }
+    itStringifiesProperties(
+      stringProperties as StringifyProperty<string>,
+      "foo"
+    );
   });
 
   describe("option style properties", () => {
-    Reflect.ownKeys(optionsx).forEach((k) => {
-      const x = Reflect.get(optionsx, k);
-      it(`can stringify enum value '${String(k)}'`, () => {
-        x.fn("html", k, x.mapped);
-      });
-    });
-
-    const optionProperties: StringifyProperty<Model.Option> = {
-      dashed: testStringifyProperty,
-      endFill: testStringifyProperty,
-      html: testStringifyProperty,
-      rounded: testStringifyProperty,
-      startFill: testStringifyProperty,
+    const optionEnum: F<Model.Option> = {
+      [Model.Yes]: _enum("1", testStringifyEnumValue),
+      [Model.No]: _enum("0", testStringifyEnumValue),
     };
 
-    let k: keyof typeof optionProperties;
-    for (k in optionProperties) {
-      it(`can stringify property ${k}`, () => {
-        optionProperties[k](k, Model.Yes, "1");
-      });
-    }
+    const optionProperties: StringifyProperty<Model.Option> = {
+      dashed: stringifyExpectation,
+      endFill: stringifyExpectation,
+      html: stringifyExpectation,
+      rounded: stringifyExpectation,
+      startFill: stringifyExpectation,
+    };
+
+    itStringifiesEnumValues(optionEnum, "html");
+    itStringifiesProperties(optionProperties, Model.Yes, "1");
   });
 });
 
@@ -184,22 +115,125 @@ describe("Parse style", () => {
       expect(Style.parse("html=1;")).toStrictEqual({ html: Yes });
     });
 
-    test.each(options)("parses option '%s'", (opt) => {
-      expect(Style.parse(`${opt}=1;`)).toStrictEqual({ [opt]: Yes });
-    });
+    const options: ParseProperty<Model.Option> = {
+      dashed: parseExpectation,
+      endFill: parseExpectation,
+      html: parseExpectation,
+      rounded: parseExpectation,
+      startFill: parseExpectation,
+    };
+
+    itParsesProperties(options, Model.Yes, "1");
   });
 
   describe("parse numbers", () => {
-    test.each(numbers)("parses number for '%s'", (prop) => {
-      const v = 29;
-      expect(Style.parse(`${prop}=${v}`)).toStrictEqual({ [prop]: v });
-    });
+    const numbers: ParseProperty<number> = {
+      opacity: parseExpectation,
+      perimeterSpacing: parseExpectation,
+      strokeWidth: parseExpectation,
+    };
+
+    itParsesProperties(numbers, 29);
   });
 
   describe("parse strings", () => {
-    test.each(strings)("parsers string for '%s'", (prop) => {
-      const v = "baz";
-      expect(Style.parse(`${prop}=${v}`)).toStrictEqual({ [prop]: v });
-    });
+    const strings: Omit<ParseProperty<string>, "name"> = {
+      fillColor: parseExpectation,
+      gradientColor: parseExpectation,
+      shape: parseExpectation,
+      strokeColor: parseExpectation,
+      whiteSpace: parseExpectation,
+    };
+
+    itParsesProperties(strings as ParseProperty<string>, "baz");
   });
 });
+
+type SelectProperty<T extends object, U> = {
+  [P in keyof Required<T>]: Required<T>[P] extends U ? P : never;
+}[keyof T];
+
+type StringifyProperty<T> = Record<
+  SelectProperty<Model.Style, T>,
+  (property: string, value: T, target?: string) => void
+>;
+
+function stringifyExpectation<T>(
+  property: string,
+  value: T,
+  target = String(value)
+) {
+  expect(Style.stringify({ [property]: value })).toBe(
+    `${property}=${target};`
+  );
+}
+
+function itStringifiesProperties<T, U extends StringifyProperty<T>>(
+  stringProperties: U,
+  value: T,
+  stringifiedValue = String(value)
+) {
+  let k: keyof typeof stringProperties;
+  for (k in stringProperties) {
+    it(`can stringify property '${String(k)}'`, () => {
+      stringProperties[k](String(k), value, stringifiedValue);
+    });
+  }
+}
+
+type F<E extends symbol> = Record<
+  E,
+  { mapped: string; fn: StringifyEnumTestFn<E> }
+>;
+type StringifyEnumTestFn<E> = (
+  property: string,
+  value: E,
+  str: string
+) => void;
+function testStringifyEnumValue<E>(property: string, value: E, str: string) {
+  expect(Style.stringify({ [property]: value })).toBe(`${property}=${str};`);
+}
+
+function _enum<E>(mapped: string, fn: StringifyEnumTestFn<E>) {
+  return { mapped, fn };
+}
+
+function itStringifiesEnumValues<U extends symbol, T extends F<U>>(
+  _enum: T,
+  property: string
+) {
+  Reflect.ownKeys(_enum).forEach((k) => {
+    const x = Reflect.get(_enum, k);
+    it(`can stringify enum value '${String(k)}'`, () => {
+      x.fn(property, k as U, x.mapped);
+    });
+  });
+}
+
+type ParseProperty<T> = Record<
+  SelectProperty<Model.Style, T>,
+  (property: string, value: T, parsedValue?: string) => void
+>;
+
+function parseExpectation<T>(
+  property: string,
+  value: T,
+  parsedValue = String(value)
+) {
+  expect(Style.parse(`${property}=${parsedValue}`)).toStrictEqual({
+    [property]: value,
+  });
+}
+
+function itParsesProperties<T, U extends ParseProperty<T>>(
+  properties: U,
+  value: T,
+  parseValue = String(value)
+) {
+  let k: keyof typeof properties;
+  for (k in properties) {
+    it(`can parse property '${String(k)}'`, () => {
+      properties[k](String(k), value, parseValue);
+    });
+  }
+}
