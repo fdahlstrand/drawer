@@ -12,6 +12,52 @@ const strings = [
   "shape",
 ];
 
+type SelectProperty<T extends object, U> = {
+  [P in keyof Required<T>]: Required<T>[P] extends U ? P : never;
+}[keyof T];
+
+type StringifyTestFn<T> = (
+  property: string,
+  value: T,
+  target?: string
+) => void;
+type StringifyProperty<T> = Record<
+  SelectProperty<Model.Style, T>,
+  StringifyTestFn<T>
+>;
+
+function testStringifyProperty<T>(
+  property: string,
+  value: T,
+  target = String(value)
+) {
+  expect(Style.stringify({ [property]: value })).toBe(
+    `${property}=${target};`
+  );
+}
+
+type F<E extends symbol> = Record<
+  E,
+  { mapped: string; fn: StringifyEnumTestFn<E> }
+>;
+type StringifyEnumTestFn<E> = (
+  property: string,
+  value: E,
+  str: string
+) => void;
+function testStringifyEnumValue<E>(property: string, value: E, str: string) {
+  expect(Style.stringify({ [property]: value })).toBe(`${property}=${str};`);
+}
+
+function _enum<E>(mapped: string, fn: StringifyEnumTestFn<E>) {
+  return { mapped, fn };
+}
+
+const optionsx: F<Model.Option> = {
+  [Model.Yes]: _enum("1", testStringifyEnumValue),
+  [Model.No]: _enum("0", testStringifyEnumValue),
+};
+
 describe("Stringify style", () => {
   test("empty style generates nothing", () => {
     expect(Style.stringify({})).toBe("");
@@ -37,32 +83,60 @@ describe("Stringify style", () => {
     expect(consoleSpy).toBeCalled();
   });
 
-  describe("stringify option", () => {
-    test("option enabled (Yes) sets value to 1", () => {
-      expect(Style.stringify({ html: Yes })).toBe("html=1;");
-    });
+  describe("numeric style properties", () => {
+    const numberProperties: StringifyProperty<number> = {
+      opacity: testStringifyProperty,
+      perimeterSpacing: testStringifyProperty,
+      strokeWidth: testStringifyProperty,
+    };
 
-    test("option disabled (No) sets value to 0", () => {
-      expect(Style.stringify({ html: No })).toBe("html=0;");
-    });
-
-    test.each(options)("stringifies option '%s'", (opt) => {
-      expect(Style.stringify({ [opt]: Yes })).toBe(`${opt}=1;`);
-    });
+    let k: keyof typeof numberProperties;
+    for (k in numberProperties) {
+      it(`can stringify property ${k}`, () => {
+        numberProperties[k](k, 19);
+      });
+    }
   });
 
-  describe("stringify number values", () => {
-    test.each(numbers)("set '%s' to a number", (prop) => {
-      const v = 19;
-      expect(Style.stringify({ [prop]: v })).toBe(`${prop}=${v};`);
-    });
+  describe("string style properties", () => {
+    const stringProperties: Omit<StringifyProperty<string>, "name"> = {
+      fillColor: testStringifyProperty,
+      gradientColor: testStringifyProperty,
+      shape: testStringifyProperty,
+      strokeColor: testStringifyProperty,
+      whiteSpace: testStringifyProperty,
+    };
+
+    let k: keyof typeof stringProperties;
+    for (k in stringProperties) {
+      it(`can stringify property '${k}'`, () => {
+        stringProperties[k](k, "foo");
+      });
+    }
   });
 
-  describe("stringify string value", () => {
-    test.each(strings)("set '%s' to a string", (prop) => {
-      const v = "foo";
-      expect(Style.stringify({ [prop]: v })).toBe(`${prop}=${v};`);
+  describe("option style properties", () => {
+    Reflect.ownKeys(optionsx).forEach((k) => {
+      const x = Reflect.get(optionsx, k);
+      it(`can stringify enum value '${String(k)}'`, () => {
+        x.fn("html", k, x.mapped);
+      });
     });
+
+    const optionProperties: StringifyProperty<Model.Option> = {
+      dashed: testStringifyProperty,
+      endFill: testStringifyProperty,
+      html: testStringifyProperty,
+      rounded: testStringifyProperty,
+      startFill: testStringifyProperty,
+    };
+
+    let k: keyof typeof optionProperties;
+    for (k in optionProperties) {
+      it(`can stringify property ${k}`, () => {
+        optionProperties[k](k, Model.Yes, "1");
+      });
+    }
   });
 });
 
