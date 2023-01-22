@@ -2,15 +2,14 @@ import * as Model from "../model.js";
 
 export class Style {
   static stringify(style: Model.Style): string {
+    type StyleMapperFn<T> = (key: string, value: T) => string;
+
     let property: keyof typeof style;
     const st = [];
     for (property in style) {
       if (property !== undefined && property in styleMapper) {
         const value = style[property];
-        const f = styleMapper[property] as (
-          key: string,
-          val: typeof value
-        ) => string;
+        const f = styleMapper[property] as StyleMapperFn<typeof value>;
         st.push(f(property, value));
       } else {
         console.error(`Property ${property} is not implemented.`);
@@ -95,14 +94,12 @@ const sourceGradientDirectionMap: EnumMapper<Model.GradientDirection> = {
 const targetGradientDirectionMap = reverseMap(sourceGradientDirectionMap);
 
 const styleMapper = (function () {
-  type Mapper<Spec extends [string, unknown][]> = Spec extends [
-    infer First extends [string, unknown],
-    ...infer Rest extends [string, unknown][]
-  ]
-    ? {
-        [P in First[0]]: (key: string, value: First[1]) => string;
-      } & Mapper<Rest>
-    : unknown;
+  type Mapper<T extends object> = {
+    [K in keyof Required<T>]-?: (
+      key: string,
+      value: Required<T>[K]
+    ) => string;
+  };
 
   function optionMapper(key: string, value: Model.Option): string {
     return `${key}=${value === Model.Yes ? "1" : "0"}`;
@@ -130,7 +127,7 @@ const styleMapper = (function () {
     return `${key}=${value.join(" ")}`;
   }
 
-  const m: Mapper<Model.Styles> = {
+  const m: Mapper<Model.Style> = {
     name: styleNameMapper,
     html: optionMapper,
     rounded: optionMapper,

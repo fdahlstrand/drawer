@@ -39,7 +39,27 @@ type MetaElement = {
   placeholders?: Map<string, string>;
 };
 
-export type Style = Partial<MakeObject<Styles>>;
+export type Style = {
+  name?: string;
+  rounded?: Option;
+  html?: Option;
+  whiteSpace?: string;
+  endArrow?: ArrowStyle;
+  startArrow?: ArrowStyle;
+  endFill?: Option;
+  startFill?: Option;
+  strokeWidth?: number;
+  fillColor?: string;
+  fillStyle?: FillStyle;
+  strokeColor?: string;
+  dashed?: Option;
+  dashPattern?: number[];
+  perimeterSpacing?: number;
+  opacity?: number;
+  gradientColor?: string;
+  gradientDirection?: GradientDirection;
+  shape?: string;
+};
 
 export type Point = {
   x: number;
@@ -50,28 +70,6 @@ export type Size = {
   width: number;
   height: number;
 };
-
-export type Styles = [
-  ["name", string],
-  ["rounded", Option],
-  ["html", Option],
-  ["whiteSpace", string],
-  ["endArrow", ArrowStyle],
-  ["startArrow", ArrowStyle],
-  ["endFill", Option],
-  ["startFill", Option],
-  ["strokeWidth", number],
-  ["fillColor", string],
-  ["fillStyle", FillStyle],
-  ["strokeColor", string],
-  ["dashed", Option],
-  ["dashPattern", number[]],
-  ["perimeterSpacing", number],
-  ["opacity", number],
-  ["gradientColor", string],
-  ["gradientDirection", GradientDirection],
-  ["shape", string]
-];
 
 export const Yes = Symbol("Yes");
 export const No = Symbol("No");
@@ -158,10 +156,3 @@ export type GradientDirection =
   | typeof East
   | typeof West
   | typeof South;
-
-type MakeObject<T extends [string, unknown][]> = T extends [
-  infer First extends [string, unknown],
-  ...infer Rest extends [string, unknown][]
-]
-  ? { [P in First[0]]: First[1] } & MakeObject<Rest>
-  : unknown;
