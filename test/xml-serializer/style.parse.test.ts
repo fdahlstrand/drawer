@@ -1,8 +1,109 @@
-import { No, Yes } from "../../src/drawio/drawio.js";
 import { Style } from "../../src/drawio/xml-serializer/style.js";
 import * as Model from "../../src/drawio/model.js";
 
-describe("Parse style", () => {
+export type SelectProperty<T extends object, U> = {
+  [P in keyof Required<T>]: Required<T>[P] extends U ? P : never;
+}[keyof T];
+
+type StyleMap<T, O extends string | symbol = never> = Omit<
+  Record<SelectProperty<Model.Style, T>, string>,
+  O
+>;
+
+type TestData = {
+  key: string | symbol;
+  mappedTo: string;
+};
+
+function mapping<T extends string>(m: Record<T, string>): TestData[] {
+  return Object.keys(m).map((k) => ({
+    key: k,
+    mappedTo: m[k as T],
+  }));
+}
+
+function enumMapping<T extends symbol>(map: EnumMap<T>): TestData[] {
+  return Reflect.ownKeys(map).map(
+    (k) => ({ key: k, mappedTo: map[k as T] } as TestData)
+  );
+}
+
+type EnumMap<T extends symbol> = Record<T, string>;
+
+describe("parse properties of type 'number'", () => {
+  const propertyMap: StyleMap<number> = {
+    opacity: "opacity",
+    perimeterSpacing: "perimeterSpacing",
+    strokeWidth: "strokeWidth",
+  };
+
+  test.each(mapping(propertyMap))(
+    "parses property '$key' when given as '$mappedTo'",
+    ({ key, mappedTo }: TestData) => {
+      const value = 19;
+      expect(Style.parse(`${mappedTo}=${value}`)).toStrictEqual({
+        [key]: value,
+      });
+    }
+  );
+});
+
+describe("parse properties of type 'string'", () => {
+  const propertyMap: StyleMap<string, "name"> = {
+    fillColor: "fillColor",
+    gradientColor: "gradientColor",
+    shape: "shape",
+    strokeColor: "strokeColor",
+    whiteSpace: "whiteSpace",
+  };
+
+  test.each(mapping(propertyMap))(
+    "parses property '$key' when given as '$mappedTo'",
+    ({ key, mappedTo }: TestData) => {
+      const value = "foo";
+      expect(Style.parse(`${mappedTo}=${value}`)).toStrictEqual({
+        [key]: value,
+      });
+    }
+  );
+});
+
+describe("parse properties of type 'option'", () => {
+  const propertyMap: StyleMap<Model.Option> = {
+    dashed: "dashed",
+    endFill: "endFill",
+    html: "html",
+    rounded: "rounded",
+    startFill: "startFill",
+  };
+
+  const enumMap: EnumMap<Model.Option> = {
+    [Model.Yes]: "1",
+    [Model.No]: "0",
+  };
+
+  test.each(mapping(propertyMap))(
+    "parses property '$key' when given as '$mappedTo'",
+    ({ key, mappedTo }: TestData) => {
+      expect(Style.parse(`${mappedTo}=1`)).toStrictEqual({
+        [key]: Model.Yes,
+      });
+    }
+  );
+
+  test.each(enumMapping(enumMap))(
+    "parses enum value '$key' when given as '$mappedTo'",
+    ({ key, mappedTo }: TestData) => {
+      expect(Style.parse(`html=${mappedTo};`)).toStrictEqual({ html: key });
+    }
+  );
+
+  test("parse option with unsupported value sets the property to No", () => {
+    expect(Style.parse("html=99;")).toStrictEqual({ html: Model.No });
+  });
+});
+
+describe("style parsing corner cases", () => {
   test("no style generates empty style", () => {
     expect(Style.parse(undefined)).toStrictEqual({});
   });
@@ -32,82 +133,4 @@ describe("Parse style", () => {
     Style.parse("foo=1");
     expect(consoleSpy).toBeCalled();
   });
-
-  describe("parse options", () => {
-    test("parse option with value 0, sets style to No", () => {
-      expect(Style.parse("html=0;")).toStrictEqual({ html: No });
-    });
-
-    test("parse option with value 99, sets style to No", () => {
-      expect(Style.parse("html=99;")).toStrictEqual({ html: No });
-    });
-
-    test("parse option with value 1, sets style to Yes", () => {
-      expect(Style.parse("html=1;")).toStrictEqual({ html: Yes });
-    });
-
-    const options: ParseProperty<Model.Option> = {
-      dashed: parseExpectation,
-      endFill: parseExpectation,
-      html: parseExpectation,
-      rounded: parseExpectation,
-      startFill: parseExpectation,
-    };
-
-    itParsesProperties(options, Model.Yes, "1");
-  });
-
-  describe("parse numbers", () => {
-    const numbers: ParseProperty<number> = {
-      opacity: parseExpectation,
-      perimeterSpacing: parseExpectation,
-      strokeWidth: parseExpectation,
-    };
-
-    itParsesProperties(numbers, 29);
-  });
-
-  describe("parse strings", () => {
-    const strings: Omit<ParseProperty<string>, "name"> = {
-      fillColor: parseExpectation,
-      gradientColor: parseExpectation,
-      shape: parseExpectation,
-      strokeColor: parseExpectation,
-      whiteSpace: parseExpectation,
-    };
-
-    itParsesProperties(strings as ParseProperty<string>, "baz");
-  });
 });
-
-export type SelectProperty<T extends object, U> = {
-  [P in keyof Required<T>]: Required<T>[P] extends U ? P : never;
-}[keyof T];
-
-type ParseProperty<T> = Record<
-  SelectProperty<Model.Style, T>,
-  (property: string, value: T, parsedValue?: string) => void
->;
-
-function parseExpectation<T>(
-  property: string,
-  value: T,
-  parsedValue = String(value)
-) {
-  expect(Style.parse(`${property}=${parsedValue}`)).toStrictEqual({
-    [property]: value,
-  });
-}
-
-function itParsesProperties<T, U extends ParseProperty<T>>(
-  properties: U,
-  value: T,
-  parseValue = String(value)
-) {
-  let k: keyof typeof properties;
-  for (k in properties) {
-    it(`can parse property '${String(k)}'`, () => {
-      properties[k](String(k), value, parseValue);
-    });
-  }
-}
