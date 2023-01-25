@@ -1,6 +1,6 @@
-import { Yes } from "../../src/drawio/drawio.js";
 import { Style } from "../../src/drawio/xml-serializer/style.js";
 import * as Model from "../../src/drawio/model.js";
+import { EnumMap, mapping, StyleMap, Mapping } from "./style.util.js";
 
 describe("Style.stringify corner cases", () => {
   it("generates emptry string from null style", () => {
@@ -11,14 +11,16 @@ describe("Style.stringify corner cases", () => {
     jest.spyOn(console, "error").mockImplementation(() => {
       true;
     });
-    expect(Style.stringify({ unknownProperty: Yes } as Model.Style)).toBe("");
+    expect(
+      Style.stringify({ unknownProperty: Model.Yes } as Model.Style)
+    ).toBe("");
   });
 
   it("writes an error to the console for unknown style properties", () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {
       true;
     });
-    Style.stringify({ unknownProperty: Yes } as Model.Style);
+    Style.stringify({ unknownProperty: Model.Yes } as Model.Style);
     expect(consoleSpy).toBeCalled();
   });
 });
@@ -39,11 +41,9 @@ describe("Style.stringify properties of type 'number'", () => {
 
   test.each(mapping(propertyMap))(
     "stringifies property '$key' as '$mappedTo'",
-    (data) => {
+    ({ key, mappedTo }: Mapping) => {
       const value = 19;
-      expect(Style.stringify({ [data.key]: value })).toBe(
-        `${data.mappedTo}=${value};`
-      );
+      expect(Style.stringify({ [key]: value })).toBe(`${mappedTo}=${value};`);
     }
   );
 });
@@ -59,11 +59,9 @@ describe("Style.stringify properties of type 'string'", () => {
 
   test.each(mapping(propertyMap))(
     "stringifies property '$key' as '$mappedTo'",
-    (data) => {
+    ({ key, mappedTo }: Mapping) => {
       const value = "foo";
-      expect(Style.stringify({ [data.key]: value })).toBe(
-        `${data.mappedTo}=${value};`
-      );
+      expect(Style.stringify({ [key]: value })).toBe(`${mappedTo}=${value};`);
     }
   );
 });
@@ -84,14 +82,12 @@ describe("Style.stringify properties of type 'Option'", () => {
 
   test.each(mapping(propertyMap))(
     "stringifies property '$key' as '$mappedTo'",
-    (data) => {
-      expect(Style.stringify({ [data.key]: Model.Yes })).toBe(
-        `${data.mappedTo}=1;`
-      );
+    ({ key, mappedTo }: Mapping) => {
+      expect(Style.stringify({ [key]: Model.Yes })).toBe(`${mappedTo}=1;`);
     }
   );
 
-  test.each(enumMapping(optionMap))(
+  test.each(mapping(optionMap))(
     "stringifies enum value '$key' to '$mappedTo'",
     (data) => {
       expect(Style.stringify({ html: data.key as Model.Option })).toBe(
@@ -100,32 +96,3 @@ describe("Style.stringify properties of type 'Option'", () => {
     }
   );
 });
-
-type SelectProperty<T extends object, U> = {
-  [P in keyof Required<T>]: Required<T>[P] extends U ? P : never;
-}[keyof T];
-
-type StyleMap<T, O extends string | symbol = never> = Omit<
-  Record<SelectProperty<Model.Style, T>, string>,
-  O
->;
-
-type EnumMap<T extends symbol> = Record<T, string>;
-
-type TestData = {
-  key: string | symbol;
-  mappedTo: string;
-};
-
-function mapping<T extends string>(m: Record<T, string>): TestData[] {
-  return Object.keys(m).map((k) => ({
-    key: k,
-    mappedTo: m[k as T],
-  }));
-}
-
-function enumMapping<T extends symbol>(map: EnumMap<T>): TestData[] {
-  return Reflect.ownKeys(map).map(
-    (k) => ({ key: k, mappedTo: map[k as T] } as TestData)
-  );
-}

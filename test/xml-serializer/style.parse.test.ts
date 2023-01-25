@@ -1,34 +1,6 @@
 import { Style } from "../../src/drawio/xml-serializer/style.js";
 import * as Model from "../../src/drawio/model.js";
-
-export type SelectProperty<T extends object, U> = {
-  [P in keyof Required<T>]: Required<T>[P] extends U ? P : never;
-}[keyof T];
-
-type StyleMap<T, O extends string | symbol = never> = Omit<
-  Record<SelectProperty<Model.Style, T>, string>,
-  O
->;
-
-type TestData = {
-  key: string | symbol;
-  mappedTo: string;
-};
-
-function mapping<T extends string>(m: Record<T, string>): TestData[] {
-  return Object.keys(m).map((k) => ({
-    key: k,
-    mappedTo: m[k as T],
-  }));
-}
-
-function enumMapping<T extends symbol>(map: EnumMap<T>): TestData[] {
-  return Reflect.ownKeys(map).map(
-    (k) => ({ key: k, mappedTo: map[k as T] } as TestData)
-  );
-}
-
-type EnumMap<T extends symbol> = Record<T, string>;
+import { EnumMap, mapping, StyleMap, Mapping } from "./style.util.js";
 
 describe("parse properties of type 'number'", () => {
   const propertyMap: StyleMap<number> = {
@@ -39,7 +11,7 @@ describe("parse properties of type 'number'", () => {
 
   test.each(mapping(propertyMap))(
     "parses property '$key' when given as '$mappedTo'",
-    ({ key, mappedTo }: TestData) => {
+    ({ key, mappedTo }: Mapping) => {
       const value = 19;
       expect(Style.parse(`${mappedTo}=${value}`)).toStrictEqual({
         [key]: value,
@@ -59,7 +31,7 @@ describe("parse properties of type 'string'", () => {
 
   test.each(mapping(propertyMap))(
     "parses property '$key' when given as '$mappedTo'",
-    ({ key, mappedTo }: TestData) => {
+    ({ key, mappedTo }: Mapping) => {
       const value = "foo";
       expect(Style.parse(`${mappedTo}=${value}`)).toStrictEqual({
         [key]: value,
@@ -84,16 +56,16 @@ describe("parse properties of type 'option'", () => {
 
   test.each(mapping(propertyMap))(
     "parses property '$key' when given as '$mappedTo'",
-    ({ key, mappedTo }: TestData) => {
+    ({ key, mappedTo }: Mapping) => {
       expect(Style.parse(`${mappedTo}=1`)).toStrictEqual({
         [key]: Model.Yes,
       });
     }
   );
 
-  test.each(enumMapping(enumMap))(
+  test.each(mapping(enumMap))(
     "parses enum value '$key' when given as '$mappedTo'",
-    ({ key, mappedTo }: TestData) => {
+    ({ key, mappedTo }: Mapping) => {
       expect(Style.parse(`html=${mappedTo};`)).toStrictEqual({ html: key });
     }
   );
