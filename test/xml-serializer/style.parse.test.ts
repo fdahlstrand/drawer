@@ -20,6 +20,21 @@ describe("parse properties of type 'number'", () => {
   );
 });
 
+describe("parse properties of type 'number[]'", () => {
+  const propertyMap: StyleMap<number[]> = {
+    dashPattern: 'dashPattern'
+  }
+
+  test.each(mapping(propertyMap))(
+    "parses property '$key' when given as '$mappedTo'",
+    ({key, mappedTo}: Mapping) => {
+      const value = [9, 8, 23, 4];
+      expect(Style.parse(`${mappedTo}=${value.join(' ')};`)).toStrictEqual({
+        [key]: value
+      })
+    });
+})
+
 describe("parse properties of type 'string'", () => {
   const propertyMap: StyleMap<string, "name"> = {
     fillColor: "fillColor",
