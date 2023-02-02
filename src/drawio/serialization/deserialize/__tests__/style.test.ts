@@ -1,6 +1,11 @@
-import * as Style from "../../src/drawio/serialization/deserialize/style.js";
-import * as Model from "../../src/drawio/model.js";
-import { EnumMap, mapping, StyleMap, Mapping } from "./style.util.js";
+import * as Style from "../style.js";
+import * as Model from "../../../model.js";
+import {
+  EnumMap,
+  mapping,
+  StyleMap,
+  Mapping,
+} from "../../__tests__/style.util.js";
 
 describe("parse properties of type 'number'", () => {
   const propertyMap: StyleMap<number> = {

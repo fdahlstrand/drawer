@@ -1,4 +1,4 @@
-import * as Model from "../../src/drawio/model.js";
+import * as Model from "../../model.js";
 
 type SelectProperty<T extends object, U> = {
   [P in keyof Required<T>]: Required<T>[P] extends U ? P : never;

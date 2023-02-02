@@ -1,6 +1,11 @@
-import * as Style from "../../src/drawio/serialization/serialize/style.js";
-import * as Model from "../../src/drawio/model.js";
-import { EnumMap, mapping, StyleMap, Mapping } from "./style.util.js";
+import * as Style from "../style.js";
+import * as Model from "../../../model.js";
+import {
+  EnumMap,
+  mapping,
+  StyleMap,
+  Mapping,
+} from "../../__tests__/style.util.js";
 
 describe("Style.stringify corner cases", () => {
   it("generates emptry string from null style", () => {
