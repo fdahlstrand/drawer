@@ -1,7 +1,8 @@
 import { ConnectionBuilder } from "./connection-builder.js";
 import { ShapeBuilder } from "./shape-builder.js";
 
-export { XmlSerializer } from "./xml-serializer/serializer.js";
+export { serialize } from "./serialization/serialize/serialize.js";
+export { deserialize } from "./serialization/deserialize/deserialize.js";
 export * from "./model.js";
 
 export function Shape(id: string): ShapeBuilder {

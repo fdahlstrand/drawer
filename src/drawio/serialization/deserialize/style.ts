@@ -1,46 +1,23 @@
-import * as Model from "../model.js";
+import * as Model from "../../model.js";
 
-export class Style {
-  static stringify(style: Model.Style): string {
-    type StyleMapperFn<T> = (key: string, value: T) => string;
+export function parse(str: string): Model.Style {
+  const elems = str ? str.split(";").filter((e) => e !== "") : [];
+  let s: Model.Style = {};
 
-    let property: keyof typeof style;
-    const st = [];
-    for (property in style) {
-      if (property !== undefined && property in styleMapper) {
-        const value = style[property];
-        const f = styleMapper[property] as StyleMapperFn<typeof value>;
-        st.push(f(property, value));
+  elems.forEach((e) => {
+    const [property, value] = e.split("=") as [string, string];
+
+    if (value === undefined) {
+      s.name = property;
+    } else {
+      if (property in stringMapper) {
+        s = { ...s, ...stringMapper[property](property, value) };
       } else {
-        console.error(`Property ${property} is not implemented.`);
+        console.warn(`Unknown property '${property}' ignored.`);
       }
     }
-    if (st.length > 0) {
-      return st.join(";") + ";";
-    }
-
-    return "";
-  }
-
-  static parse(str: string): Model.Style {
-    const elems = str ? str.split(";").filter((e) => e !== "") : [];
-    let s: Model.Style = {};
-
-    elems.forEach((e) => {
-      const [property, value] = e.split("=") as [string, string];
-
-      if (value === undefined) {
-        s.name = property;
-      } else {
-        if (property in stringMapper) {
-          s = { ...s, ...stringMapper[property](property, value) };
-        } else {
-          console.warn(`Unknown property '${property}' ignored.`);
-        }
-      }
-    });
-    return s;
-  }
+  });
+  return s;
 }
 
 const sourceArrowStyleMap: EnumMapper<Model.ArrowStyle> = {
@@ -92,65 +69,6 @@ const sourceGradientDirectionMap: EnumMapper<Model.GradientDirection> = {
   [Model.West]: "west",
 };
 const targetGradientDirectionMap = reverseMap(sourceGradientDirectionMap);
-
-const styleMapper = (function () {
-  type Mapper<T extends object> = {
-    [K in keyof Required<T>]-?: (
-      key: string,
-      value: Required<T>[K]
-    ) => string;
-  };
-
-  function optionMapper(key: string, value: Model.Option): string {
-    return `${key}=${value === Model.Yes ? "1" : "0"}`;
-  }
-
-  function enumMapper<T extends symbol>(map: EnumMapper<T>) {
-    return (key: string, value: T): string => {
-      return `${key}=${map[value]}`;
-    };
-  }
-
-  function numberMapper(key: string, value: number): string {
-    return `${key}=${value}`;
-  }
-
-  function stringMapper(key: string, value: string): string {
-    return `${key}=${value}`;
-  }
-
-  function styleNameMapper(key: string, value: string): string {
-    return `${value}`;
-  }
-
-  function arrayMapper(key: string, value: number[]): string {
-    return `${key}=${value.join(" ")}`;
-  }
-
-  const m: Mapper<Model.Style> = {
-    name: styleNameMapper,
-    html: optionMapper,
-    rounded: optionMapper,
-    whiteSpace: stringMapper,
-    startFill: optionMapper,
-    endFill: optionMapper,
-    strokeWidth: numberMapper,
-    startArrow: enumMapper(sourceArrowStyleMap),
-    endArrow: enumMapper(sourceArrowStyleMap),
-    fillColor: stringMapper,
-    fillStyle: enumMapper(sourceFillStyleMap),
-    strokeColor: stringMapper,
-    dashed: optionMapper,
-    dashPattern: arrayMapper,
-    perimeterSpacing: numberMapper,
-    opacity: numberMapper,
-    gradientColor: stringMapper,
-    gradientDirection: enumMapper(sourceGradientDirectionMap),
-    shape: stringMapper,
-  };
-
-  return m;
-})();
 
 const stringMapper = (function () {
   type Mapper = {

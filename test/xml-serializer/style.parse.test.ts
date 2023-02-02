@@ -1,4 +1,4 @@
-import { Style } from "../../src/drawio/xml-serializer/style.js";
+import * as Style from "../../src/drawio/serialization/deserialize/style.js";
 import * as Model from "../../src/drawio/model.js";
 import { EnumMap, mapping, StyleMap, Mapping } from "./style.util.js";
 
@@ -22,18 +22,19 @@ describe("parse properties of type 'number'", () => {
 
 describe("parse properties of type 'number[]'", () => {
   const propertyMap: StyleMap<number[]> = {
-    dashPattern: 'dashPattern'
-  }
+    dashPattern: "dashPattern",
+  };
 
   test.each(mapping(propertyMap))(
     "parses property '$key' when given as '$mappedTo'",
-    ({key, mappedTo}: Mapping) => {
+    ({ key, mappedTo }: Mapping) => {
       const value = [9, 8, 23, 4];
-      expect(Style.parse(`${mappedTo}=${value.join(' ')};`)).toStrictEqual({
-        [key]: value
-      })
-    });
-})
+      expect(Style.parse(`${mappedTo}=${value.join(" ")};`)).toStrictEqual({
+        [key]: value,
+      });
+    }
+  );
+});
 
 describe("parse properties of type 'string'", () => {
   const propertyMap: StyleMap<string, "name"> = {

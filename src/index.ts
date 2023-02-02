@@ -7,8 +7,9 @@ import {
   Radial,
   Rectangle,
   Shape,
-  XmlSerializer,
   Yes,
+  serialize,
+  deserialize,
 } from "./drawio/drawio.js";
 
 import fs from "node:fs";
@@ -70,13 +71,11 @@ const diagram: Diagram = {
   ],
 };
 
-const serializer = new XmlSerializer();
-
-const xml = serializer.stringify({ diagrams: [diagram] });
+const xml = serialize({ diagrams: [diagram] });
 fs.writeFileSync("./dist/generated.drawio", xml, "utf-8");
 
 const input = fs.readFileSync("./dist/test.drawio", "utf-8");
-const file = serializer.parse(input);
+const file = deserialize(input);
 
 for (let i = 0; i < file.diagrams[0].elements.length; i++) {
   console.log(file.diagrams[0].elements[i]);
