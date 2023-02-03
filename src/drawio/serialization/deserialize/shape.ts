@@ -16,14 +16,18 @@ function fromXmlAsCell(elem: Xml.MxCell): Model.Element {
     identifier: elem[":@"].id,
     label: elem[":@"].value,
     style: Style.parse(elem[":@"].style),
-    position: {
-      x: Number(elem.mxCell[0][":@"].x ?? 0),
-      y: Number(elem.mxCell[0][":@"].y ?? 0),
-    },
-    size: {
-      width: Number(elem.mxCell[0][":@"].width),
-      height: Number(elem.mxCell[0][":@"].height),
-    },
+    position: elem.mxCell[0]
+      ? {
+          x: Number(elem.mxCell[0][":@"].x ?? 0),
+          y: Number(elem.mxCell[0][":@"].y ?? 0),
+        }
+      : { x: 0, y: 0 },
+    size: elem.mxCell[0]
+      ? {
+          width: Number(elem.mxCell[0][":@"].width ?? 0),
+          height: Number(elem.mxCell[0][":@"].height ?? 0),
+        }
+      : { width: 0, height: 0 },
   };
 }
 

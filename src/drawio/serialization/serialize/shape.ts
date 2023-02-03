@@ -25,10 +25,10 @@ function toXmlAsCell(shape: Model.Shape): Xml.MxCell {
     mxCell: [
       {
         ":@": {
-          x: shape.position.x,
-          y: shape.position.y,
-          height: shape.size.height,
-          width: shape.size.width,
+          x: shape.position?.x,
+          y: shape.position?.y,
+          height: shape.size?.height,
+          width: shape.size?.width,
           as: "geometry",
         },
         mxGeometry: [],
@@ -59,8 +59,8 @@ function toXmlAsObject(shape: Model.Shape): Xml.MxObject {
         mxCell: [
           {
             ":@": {
-              x: shape.position.x,
-              y: shape.position.y,
+              x: shape.position?.x,
+              y: shape.position?.y,
               height: shape.size.height,
               width: shape.size.width,
               as: "geometry",
