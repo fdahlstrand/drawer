@@ -55,8 +55,10 @@ function fromXmlAsObject(obj: Xml.MxObject): Model.Element {
 
 function getPlaceholdersFromXml(obj: Xml.MxObject) {
   const placeholders = new Map<string, string>();
-  Object.keys(obj[":@"])
-    .filter((k) => k !== "id" && k !== "label" && k !== "placeholders")
-    .reduce((map, k) => map.set(k, obj[":@"][k]), placeholders);
+  if (obj[":@"]) {
+    Object.keys(obj[":@"])
+      .filter((k) => k !== "id" && k !== "label" && k !== "placeholders")
+      .reduce((map, k) => map.set(k, obj[":@"][k]), placeholders);
+  }
   return placeholders;
 }

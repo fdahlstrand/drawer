@@ -48,6 +48,8 @@ function pointFromXmlGeometry(
   elem: (Xml.MxPoint | Xml.MxArray)[],
   type?: "sourcePoint" | "targetPoint"
 ): Model.Point {
+  if (!elem) return undefined;
+
   return elem
     .filter((p) => "mxPoint" in p && p[":@"].as === type)
     .map((p) => p as Xml.MxPoint)
@@ -57,6 +59,7 @@ function pointFromXmlGeometry(
 function arrayFromXmlGeometry(
   elem: (Xml.MxPoint | Xml.MxArray)[]
 ): Model.Point[] {
+  if (!elem) return undefined;
   const arr = elem
     .filter((e) => "Array" in e)
     .map((a) => a as Xml.MxArray)[0];
